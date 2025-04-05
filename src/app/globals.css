@@ -58,13 +58,25 @@ input[type='checkbox']:not(:checked) {
   background-color: transparent;
 }
 
-img{
+img {
   object-fit: cover;
   object-position: center;
 }
 
-hr{
+hr {
   border-color: var(--background-light);
+}
+
+p,
+span {
+  & *::selection {
+    background-color: var(--color-gray-500)
+      /* oklch(55.1% 0.027 264.364) = #6a7282 */;
+  }
+  &::selection {
+    background-color: var(--color-gray-500)
+      /* oklch(55.1% 0.027 264.364) = #6a7282 */;
+  }
 }
 
 html {
@@ -89,7 +101,7 @@ html {
 
     @media (width < 40rem) {
       section {
-        padding: 1rem 1.5rem;
+        padding: 1rem 0.75rem;
       }
     }
 
@@ -101,7 +113,7 @@ html {
 
     @media (width >= 64rem /* lg */) {
       section {
-        padding: 1rem 5rem;
+        padding: 1rem 12rem;
       }
     }
   }
@@ -149,21 +161,30 @@ h4,
   );
 }
 
+@media (width < 40rem) {
+  .custom-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 .custom-scrollbar::-webkit-scrollbar {
-  width: 12px;
+  width: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
   background: var(--background-light);
+  border-radius: 12px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: var(--foreground-light);
+  border-radius: 12px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-button {
+/* .custom-scrollbar::-webkit-scrollbar-button {
   background-color: var(--background-light);
-}
+  border-radius: 12px;
+} */
 
 .hide-scrollbar::-webkit-scrollbar {
   display: none;

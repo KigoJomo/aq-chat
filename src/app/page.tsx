@@ -1,7 +1,8 @@
 'use client';
 
 import {
-  ClipboardCopy,
+  Check,
+  Clipboard,
   LoaderIcon,
   SendIcon,
   Sparkles,
@@ -21,6 +22,10 @@ export default function ChatPage() {
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  // Add state for tracking copied message
+  const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(
+    null
+  );
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -59,10 +64,15 @@ export default function ChatPage() {
     }
   };
 
-  // Copy message to clipboard
-  const copyToClipboard = (text: string) => {
+  // Updated copy to clipboard function with visual feedback
+  const copyToClipboard = (text: string, index: number) => {
     navigator.clipboard.writeText(text);
-    // You could add a toast notification here
+    setCopiedMessageIndex(index);
+
+    // Reset after 2 seconds
+    setTimeout(() => {
+      setCopiedMessageIndex(null);
+    }, 2000);
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -115,7 +125,7 @@ export default function ChatPage() {
   };
 
   return (
-    <section className="flex flex-col gap-6 md:gap-4">
+    <section className="h-dvh flex flex-col gap-6 md:gap-4">
       <div className="flex items-center gap-2">
         <Sparkles size={24} className="stroke-accent" />
         <h4 className="text-xl font-semibold">chatty</h4>
@@ -123,7 +133,7 @@ export default function ChatPage() {
 
       <hr className="border-background-light" />
 
-      <div className="w-full h-[65vh] md:h-[72.5vh] rounded-2xl flex flex-col gap-6 overflow-y-auto p-4">
+      <div className="w-full h-full rounded-2xl flex flex-col gap-6 overflow-y-auto custom-scrollbar md:pr-4">
         {error && (
           <div className="error fixed top-18 left-0 right-0 mx-auto bg-red-100 border border-red-600 text-red-600 text-xs rounded-md p-4 w-fit z-10">
             <span>{error}</span>
@@ -131,50 +141,85 @@ export default function ChatPage() {
         )}
 
         {chatHistory.length > 0 ? (
-          chatHistory.map((message, index) => (
-            <div
-              key={index}
-              className={`w-full flex items-start gap-2 ${
-                message.role === 'user' ? 'flex-row-reverse ml-auto' : 'mr-auto'
-              }`}>
+          <>
+            {chatHistory.map((message, index) => (
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                key={index}
+                className={`w-full flex items-start gap-2 ${
                   message.role === 'user'
-                    ? 'bg-accent/20'
-                    : 'bg-background-light'
+                    ? 'flex-row-reverse ml-auto'
+                    : 'mr-auto'
                 }`}>
-                {message.role === 'user' ? (
-                  <User size={16} />
-                ) : (
-                  <Sparkles size={16} />
-                )}
-              </div>
-              <div className="relative group">
                 <div
-                  className={`max-w-[350px] md:max-w-[700px] ${
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
                     message.role === 'user'
-                      ? 'bg-accent/10'
+                      ? 'bg-accent/20'
                       : 'bg-background-light'
-                  } rounded-2xl p-3`}>
-                  <span className="text-foreground text-sm whitespace-pre-wrap">
-                    {message.text}
-                  </span>
-                  <div className="text-xs text-gray-400 mt-1">
-                    {new Date().toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
+                  }`}>
+                  {message.role === 'user' ? (
+                    <User size={16} />
+                  ) : (
+                    <Sparkles size={16} />
+                  )}
+                </div>
+                <div className="relative group">
+                  <div
+                    className={`max-w-[350px] md:max-w-[700px] ${
+                      message.role === 'user'
+                        ? 'bg-accent/10'
+                        : 'bg-background-light'
+                    } rounded-2xl p-3`}>
+                    <span className="text-foreground text-sm whitespace-pre-wrap">
+                      {message.text}
+                    </span>
+                    <div className="mt-1">
+                      <p className="text-xs text-gray-400">
+                        {new Date().toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => copyToClipboard(message.text, index)}
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                    aria-label={
+                      copiedMessageIndex === index
+                        ? 'Copied to clipboard'
+                        : 'Copy message'
+                    }>
+                    {copiedMessageIndex === index ? (
+                      <Check size={14} className="text-green-500" />
+                    ) : (
+                      <Clipboard size={14} />
+                    )}
+                  </button>
+                </div>
+              </div>
+            ))}
+
+            {/* loading indicator when waiting for response */}
+            {loading && (
+              <div className="w-full flex items-start gap-2 mr-auto">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center bg-background-light">
+                  <Sparkles size={16} />
+                </div>
+                <div className="max-w-[350px] md:max-w-[700px] bg-background-light rounded-2xl p-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-foreground-light text-sm">
+                      Thinking
+                    </span>
+                    <span className="flex gap-1">
+                      <span className="h-2 w-2 bg-foreground-light rounded-full animate-pulse delay-100"></span>
+                      <span className="h-2 w-2 bg-foreground-light rounded-full animate-pulse delay-200"></span>
+                      <span className="h-2 w-2 bg-foreground-light rounded-full animate-pulse delay-300"></span>
+                    </span>
                   </div>
                 </div>
-                <button
-                  onClick={() => copyToClipboard(message.text)}
-                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                  aria-label="Copy message">
-                  <ClipboardCopy size={14} />
-                </button>
               </div>
-            </div>
-          ))
+            )}
+          </>
         ) : (
           <div className="w-full my-auto flex flex-col items-center gap-4">
             <Sparkles size={128} className="opacity-10" />
@@ -206,14 +251,14 @@ export default function ChatPage() {
       {/* Input Form */}
       <form
         onSubmit={handleSubmit}
-        className="w-full py-3 px-4 bg-background-light/20 border-2 border-transparent shrink-0 rounded-2xl flex items-end gap-2 focus-within:border-foreground-light/20 transition-all duration-300">
+        className="w-full mt-auto py-3 px-4 bg-background-light/20 border-2 border-transparent shrink-0 rounded-2xl flex items-end gap-2 focus-within:border-foreground-light/20 transition-all duration-300">
         <textarea
           name="prompt"
           id="prompt"
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          placeholder="Ask chatty anything... (Press Enter to send)"
+          placeholder="Ask chatty anything ..."
           disabled={loading}
           rows={1}
           className="w-full min-h-[40px] max-h-[120px] flex items-end outline-none focus:outline-none resize-none bg-transparent px-2 py-1"
