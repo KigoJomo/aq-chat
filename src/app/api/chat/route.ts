@@ -18,10 +18,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const apiKey = process.env.GOOGLE_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      console.error('GOOGLE_API_KEY is not set');
+      console.error('GEMINI_API_KEY is not set');
       return NextResponse.json(
         { error: 'API key not configured' },
         { status: 500 }
@@ -32,10 +32,12 @@ export async function POST(req: NextRequest) {
 
     const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
-    const formattedHistory = chatHistory.map((msg: { role: string; text: string; }) => ({
-      role: msg.role === 'model' ? 'model' : 'user',
-      parts: [{ text: msg.text }]
-    }))
+    const formattedHistory = chatHistory.map(
+      (msg: { role: string; text: string }) => ({
+        role: msg.role === 'model' ? 'model' : 'user',
+        parts: [{ text: msg.text }],
+      })
+    );
 
     const chat = model.startChat({
       history: formattedHistory,
