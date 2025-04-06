@@ -3,8 +3,6 @@
 import { Logo } from '@/shared/components/ui/Logo';
 import { Check, CopyIcon, LoaderIcon, SendIcon } from 'lucide-react';
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
-import MarkdownRenderer from '@/shared/components/MarkdownRenderer';
-import '@/shared/styles/markdown-highlight.css';
 
 interface Message {
   role: 'user' | 'model';
@@ -187,10 +185,7 @@ export default function ChatPage() {
                         ? 'bg-background-light/100 px-3 py-2 rounded-2xl max-w-80 md:max-w-[36rem]'
                         : 'flex flex-col gap-4'
                     }`}>
-                    <MarkdownRenderer
-                      content={message.text}
-                      className="text-foreground text-sm"
-                    />
+                    <span>{message.text}</span>
 
                     <div className="flex items-center gap-2">
                       <button
