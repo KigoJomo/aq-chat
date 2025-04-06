@@ -67,10 +67,25 @@ export default function ChatPage() {
 
   // Handle keyboard shortcuts for the textarea
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    const isMobileOrTablet = () => {
+      // Check for touch capability
+      const hasTouchScreen = 
+        'ontouchstart' in window || 
+        navigator.maxTouchPoints > 0 || 
+        ('msMaxTouchPoints' in window && 'msMaxTouchPoints' in navigator);
+      
+      // Small screen is a secondary indicator
+      const isSmallScreen = window.innerWidth <= 768;
+      
+      return hasTouchScreen || isSmallScreen;
+    };
+
+    // Only submit on Enter (without shift) if it's a desktop device
+    if (e.key === 'Enter' && !e.shiftKey && !isMobileOrTablet()) {
       e.preventDefault();
       handleSubmit(e as unknown as FormEvent<HTMLFormElement>);
     }
+    // On mobile/tablet, pressing Enter will create a new line (default behavior)
   };
 
   // Updated copy to clipboard function with visual feedback
