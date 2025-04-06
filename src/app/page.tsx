@@ -3,6 +3,8 @@
 import { Logo } from '@/shared/components/ui/Logo';
 import { Check, CopyIcon, LoaderIcon, SendIcon } from 'lucide-react';
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
+import MarkdownRenderer from '@/shared/components/MarkdownRenderer';
+import '@/shared/styles/markdown-highlight.css';
 
 interface Message {
   role: 'user' | 'model';
@@ -69,14 +71,14 @@ export default function ChatPage() {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const isMobileOrTablet = () => {
       // Check for touch capability
-      const hasTouchScreen = 
-        'ontouchstart' in window || 
-        navigator.maxTouchPoints > 0 || 
+      const hasTouchScreen =
+        'ontouchstart' in window ||
+        navigator.maxTouchPoints > 0 ||
         ('msMaxTouchPoints' in window && 'msMaxTouchPoints' in navigator);
-      
+
       // Small screen is a secondary indicator
       const isSmallScreen = window.innerWidth <= 768;
-      
+
       return hasTouchScreen || isSmallScreen;
     };
 
@@ -153,15 +155,15 @@ export default function ChatPage() {
   };
 
   return (
-    <section className="h-dvh flex flex-col gap-6 md:gap-2">
+    <section className="h-dvh flex flex-col">
+      {/* Header */}
       <div className="flex items-center gap-2">
         <Logo />
         <h4 className="">Aq Chat</h4>
       </div>
 
-      <hr className="border-background-light" />
-
-      <div className="w-full h-full flex flex-col gap-6 overflow-y-auto custom-scrollbar md:pr-4">
+      {/* Chat messages container */}
+      <div className="w-full h-full flex flex-col gap-6 overflow-y-auto custom-scrollbar md:pr-4 pt-6 pb-12 mt-6 border-t border-foreground-light/25">
         {error && (
           <div className="error fixed top-18 left-0 right-0 mx-auto bg-red-100 border border-red-600 text-red-600 text-xs rounded-md p-4 w-fit z-10">
             <span>{error}</span>
@@ -180,23 +182,17 @@ export default function ChatPage() {
                 }`}>
                 <div className="relative group">
                   <div
-                    className={`max-w-[350px] md:max-w-[700px] ${
+                    className={`${
                       message.role === 'user'
-                        ? 'bg-background-light p-3 rounded-2xl'
+                        ? 'bg-background-light/100 px-3 py-2 rounded-2xl max-w-80 md:max-w-[36rem]'
                         : 'flex flex-col gap-4'
                     }`}>
-                    <span className="text-foreground text-sm whitespace-pre-wrap">
-                      {message.text}
-                    </span>
+                    <MarkdownRenderer
+                      content={message.text}
+                      className="text-foreground text-sm"
+                    />
 
                     <div className="flex items-center gap-2">
-                      <p className="text-xs">
-                        {new Date().toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </p>
-
                       <button
                         onClick={() => copyToClipboard(message.text, index)}
                         className={`
@@ -277,7 +273,7 @@ export default function ChatPage() {
       {/* Input Form */}
       <form
         onSubmit={handleSubmit}
-        className="w-full mt-auto py-3 px-4 bg-background-light/20 border-2 border-transparent shrink-0 rounded-2xl flex flex-col gap-2 focus-within:border-foreground-light/20 transition-all duration-300">
+        className="w-full mt-auto py-3 px-4 bg-background-light border-2 border-transparent shrink-0 rounded-2xl flex flex-col gap-2 focus-within:border-foreground-light/20 transition-all duration-300">
         <div
           className="w-full grid text-sm after:px-2 after:py-1 [&>textarea]:text-inherit after:text-inherit [&>textarea]:resize-none [&>textarea]:overflow-hidden [&>textarea]:[grid-area:1/1/2/2] after:[grid-area:1/1/2/2] after:whitespace-pre-wrap after:invisible after:content-[attr(data-cloned-val)]"
           data-cloned-val={inputValue}>

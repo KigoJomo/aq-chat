@@ -1,12 +1,22 @@
 @import 'tailwindcss';
 
 :root {
-  --background: #0a0a0a;
+  --background: #131313;
   --background-light: #202020;
   --foreground: #ededed;
-  --foreground-light: #a1a1a1;
+  --foreground-light: #d3d3d3;
   --accent: #1267dd;
   --test: #68a7ff;
+
+  --font-size: 1rem;
+  --font-ratio: 1.25;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --font-ratio: 1.5;
+    --font-size: 1.2rem;
+  }
 }
 
 @theme inline {
@@ -30,23 +40,20 @@ h4 {
 }
 
 h1 {
-  font-size: clamp(3rem, 6vw, 5rem);
+  font-size: calc(var(--font-size) * var(--font-ratio) * var(--font-ratio) * var(--font-ratio));
+  text-transform: uppercase;
 }
 
 h2 {
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: calc(var(--font-size) * var(--font-ratio) * var(--font-ratio));
 }
 
 h3 {
-  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-size: calc(var(--font-size) * var(--font-ratio));
 }
 
 h4 {
-  font-size: clamp(1.2rem, 2vw, 1.5rem);
-}
-
-p {
-  color: var(--foreground-light);
+  font-size: calc(var(--font-size));
 }
 
 strong {
@@ -64,11 +71,10 @@ img {
 }
 
 hr {
-  border-color: var(--background-light);
+  border-color: color-mix(in oklab, var(--foreground-light) 25%, transparent);
 }
 
-p,
-span {
+* {
   & *::selection {
     background-color: var(--color-gray-500)
       /* oklch(55.1% 0.027 264.364) = #6a7282 */;
@@ -146,10 +152,6 @@ html {
   );
 }
 
-h1,
-h2,
-h3,
-h4,
 .text-gradient-foreground {
   background-clip: text;
   -webkit-background-clip: text;
@@ -188,11 +190,6 @@ h4,
   background-color: var(--foreground-light);
   border-radius: 12px;
 }
-
-/* .custom-scrollbar::-webkit-scrollbar-button {
-  background-color: var(--background-light);
-  border-radius: 12px;
-} */
 
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
