@@ -1,8 +1,8 @@
 @import 'tailwindcss';
 
 :root {
-  --background: #09101a;
-  --background-light: #1c2b3f;
+  --background: #0a0a0a;
+  --background-light: #202020;
   --foreground: #ededed;
   --foreground-light: #a1a1a1;
   --accent: #1267dd;
@@ -113,7 +113,7 @@ html {
 
     @media (width >= 64rem /* lg */) {
       section {
-        padding: 1rem 12rem;
+        padding: 1rem 16rem;
       }
     }
   }
@@ -159,6 +159,14 @@ h4,
     var(--foreground-light),
     var(--foreground)
   );
+}
+
+.text-solid-foreground {
+  background-clip: initial;
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+  background-image: none;
+  color: var(--foreground);
 }
 
 @media (width < 40rem) {

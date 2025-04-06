@@ -1,10 +1,10 @@
 'use client';
 
-import { Sparkles } from 'lucide-react';
 import { FC, useState } from 'react';
 import Button from '@/shared/components/ui/Button';
 import Input from '@/shared/components/ui/Input';
 import Link from 'next/link';
+import { Logo } from '@/shared/components/ui/Logo';
 
 const SignupPage: FC = () => {
   const [formData, setFormData] = useState({
@@ -36,9 +36,9 @@ const SignupPage: FC = () => {
     <section className="h-full flex flex-col items-center justify-center">
       <div className="w-full max-w-[350px] animate-fade-in-up">
         <form className="flex flex-col gap-6 p-4" onSubmit={handleSubmit}>
-        <div className="flex items-center justify-center gap-2 mb-4 animate-fade-in-down">
-            <Sparkles size={24} className="stroke-accent" />
-            <h3 className="">chatty</h3>
+          <div className="flex items-center justify-center gap-2 mb-4 animate-fade-in-down">
+            <Logo />
+            <h3 className="">Aq Chat</h3>
             <div className="h-12 w-[2px] mx-6 bg-background-light"></div>
             <h4>Sign Up</h4>
           </div>

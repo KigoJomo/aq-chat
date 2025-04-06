@@ -1,13 +1,7 @@
 'use client';
 
-import {
-  Check,
-  Clipboard,
-  LoaderIcon,
-  SendIcon,
-  Sparkles,
-  User,
-} from 'lucide-react';
+import { Logo } from '@/shared/components/ui/Logo';
+import { Check, CopyIcon, LoaderIcon, SendIcon } from 'lucide-react';
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 
 interface Message {
@@ -27,6 +21,21 @@ export default function ChatPage() {
     null
   );
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const startWithSuggestion = (suggestion: string) => {
+    setInputValue(suggestion);
+
+    if (inputRef.current?.parentElement) {
+      inputRef.current.parentElement.dataset.clonedVal = suggestion;
+    }
+
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 0);
+  };
 
   useEffect(() => {
     try {
@@ -77,6 +86,10 @@ export default function ChatPage() {
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(e.target.value);
+    // Update the data attribute for the auto-growing functionality
+    if (e.target.parentElement) {
+      e.target.parentElement.dataset.clonedVal = e.target.value;
+    }
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -125,15 +138,15 @@ export default function ChatPage() {
   };
 
   return (
-    <section className="h-dvh flex flex-col gap-6 md:gap-4">
+    <section className="h-dvh flex flex-col gap-6 md:gap-2">
       <div className="flex items-center gap-2">
-        <Sparkles size={24} className="stroke-accent" />
-        <h4 className="text-xl font-semibold">chatty</h4>
+        <Logo />
+        <h4 className="">Aq Chat</h4>
       </div>
 
       <hr className="border-background-light" />
 
-      <div className="w-full h-full rounded-2xl flex flex-col gap-6 overflow-y-auto custom-scrollbar md:pr-4">
+      <div className="w-full h-full flex flex-col gap-6 overflow-y-auto custom-scrollbar md:pr-4">
         {error && (
           <div className="error fixed top-18 left-0 right-0 mx-auto bg-red-100 border border-red-600 text-red-600 text-xs rounded-md p-4 w-fit z-10">
             <span>{error}</span>
@@ -150,51 +163,47 @@ export default function ChatPage() {
                     ? 'flex-row-reverse ml-auto'
                     : 'mr-auto'
                 }`}>
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    message.role === 'user'
-                      ? 'bg-accent/20'
-                      : 'bg-background-light'
-                  }`}>
-                  {message.role === 'user' ? (
-                    <User size={16} />
-                  ) : (
-                    <Sparkles size={16} />
-                  )}
-                </div>
                 <div className="relative group">
                   <div
                     className={`max-w-[350px] md:max-w-[700px] ${
                       message.role === 'user'
-                        ? 'bg-accent/10'
-                        : 'bg-background-light'
-                    } rounded-2xl p-3`}>
+                        ? 'bg-background-light p-3 rounded-2xl'
+                        : 'flex flex-col gap-4'
+                    }`}>
                     <span className="text-foreground text-sm whitespace-pre-wrap">
                       {message.text}
                     </span>
-                    <div className="mt-1">
-                      <p className="text-xs text-gray-400">
+
+                    <div className="flex items-center gap-2">
+                      <p className="text-xs">
                         {new Date().toLocaleTimeString([], {
                           hour: '2-digit',
                           minute: '2-digit',
                         })}
                       </p>
+
+                      <button
+                        onClick={() => copyToClipboard(message.text, index)}
+                        className={`
+                          ${
+                            message.role === 'user'
+                              ? 'absolute top-2 right-full mr-2 opacity-0 group-hover:opacity-100'
+                              : ''
+                          }
+                           transition-all cursor-pointer`}
+                        aria-label={
+                          copiedMessageIndex === index
+                            ? 'Copied to clipboard'
+                            : 'Copy message'
+                        }>
+                        {copiedMessageIndex === index ? (
+                          <Check size={14} className="text-green-500" />
+                        ) : (
+                          <CopyIcon size={14} />
+                        )}
+                      </button>
                     </div>
                   </div>
-                  <button
-                    onClick={() => copyToClipboard(message.text, index)}
-                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                    aria-label={
-                      copiedMessageIndex === index
-                        ? 'Copied to clipboard'
-                        : 'Copy message'
-                    }>
-                    {copiedMessageIndex === index ? (
-                      <Check size={14} className="text-green-500" />
-                    ) : (
-                      <Clipboard size={14} />
-                    )}
-                  </button>
                 </div>
               </div>
             ))}
@@ -203,7 +212,7 @@ export default function ChatPage() {
             {loading && (
               <div className="w-full flex items-start gap-2 mr-auto">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center bg-background-light">
-                  <Sparkles size={16} />
+                  <Logo size={16} />
                 </div>
                 <div className="max-w-[350px] md:max-w-[700px] bg-background-light rounded-2xl p-3">
                   <div className="flex items-center gap-2">
@@ -222,10 +231,12 @@ export default function ChatPage() {
           </>
         ) : (
           <div className="w-full my-auto flex flex-col items-center gap-4">
-            <Sparkles size={128} className="opacity-10" />
+            <Logo size={128} className="opacity-50" />
             <div className="text-center">
-              <h3 className="text-lg font-medium mb-2">Welcome to Chatty!</h3>
-              <p className="text-sm text-gray-400 mb-6">
+              <h3 className="text-solid-foreground mb-2">
+                Hi 👋, I&apos;m Aq!
+              </h3>
+              <p className="text-sm mb-6">
                 Try asking something to get started
               </p>
               <div className="flex flex-wrap justify-center gap-2">
@@ -237,7 +248,7 @@ export default function ChatPage() {
                   <button
                     key={suggestion}
                     className="bg-background-light hover:bg-background-light/80 px-3 py-2 rounded-lg text-sm cursor-pointer transition-all duration-300"
-                    onClick={() => setInputValue(suggestion)}>
+                    onClick={() => startWithSuggestion(suggestion)}>
                     {suggestion}
                   </button>
                 ))}
@@ -251,32 +262,43 @@ export default function ChatPage() {
       {/* Input Form */}
       <form
         onSubmit={handleSubmit}
-        className="w-full mt-auto py-3 px-4 bg-background-light/20 border-2 border-transparent shrink-0 rounded-2xl flex items-end gap-2 focus-within:border-foreground-light/20 transition-all duration-300">
-        <textarea
-          name="prompt"
-          id="prompt"
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          placeholder="Ask chatty anything ..."
-          disabled={loading}
-          rows={1}
-          className="w-full min-h-[40px] max-h-[120px] flex items-end outline-none focus:outline-none resize-none bg-transparent px-2 py-1"
-          style={{ overflow: 'auto' }}
-        />
+        className="w-full mt-auto py-3 px-4 bg-background-light/20 border-2 border-transparent shrink-0 rounded-2xl flex flex-col gap-2 focus-within:border-foreground-light/20 transition-all duration-300">
+        <div
+          className="w-full grid text-sm after:px-2 after:py-1 [&>textarea]:text-inherit after:text-inherit [&>textarea]:resize-none [&>textarea]:overflow-hidden [&>textarea]:[grid-area:1/1/2/2] after:[grid-area:1/1/2/2] after:whitespace-pre-wrap after:invisible after:content-[attr(data-cloned-val)]"
+          data-cloned-val={inputValue}>
+          <textarea
+            ref={inputRef}
+            name="prompt"
+            id="prompt"
+            value={inputValue}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            placeholder="Ask me anything ..."
+            disabled={loading}
+            className="w-full outline-none focus:outline-none bg-transparent px-2 py-1 text-sm"
+            rows={1}
+          />
+        </div>
 
-        <button
-          className={`${
-            loading ? 'bg-accent/20' : 'bg-accent'
-          } p-3 rounded-xl flex-shrink-0 hover:bg-accent/80 transition-colors`}
-          type="submit"
-          disabled={loading}>
-          {loading ? (
-            <LoaderIcon size={16} className="animate-spin" />
-          ) : (
-            <SendIcon size={16} />
-          )}
-        </button>
+        <div className="w-full flex items-center justify-between">
+          <span className="capitalize text-xs bg-accent/20 px-2 py-1 rounded-full">
+            gemini 2.0 flash
+          </span>
+          <button
+            className={`${
+              loading || inputValue === ''
+                ? 'bg-background-light *:stroke-foreground cursor-not-allowed'
+                : 'bg-foreground *:stroke-background hover:bg-foreground-light cursor-pointer'
+            } w-fit p-3 rounded-xl flex-shrink-0 transition-all`}
+            type="submit"
+            disabled={loading || inputValue === ''}>
+            {loading ? (
+              <LoaderIcon size={16} className="animate-spin" />
+            ) : (
+              <SendIcon size={16} />
+            )}
+          </button>
+        </div>
       </form>
     </section>
   );

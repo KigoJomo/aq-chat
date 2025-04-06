@@ -1,10 +1,10 @@
 'use client';
 
-import { Sparkles } from 'lucide-react';
 import { FC } from 'react';
 import Link from 'next/link';
 import SigninGit from '../components/SiginInGit';
 import SigninGoogle from '../components/SiginInGoogle';
+import { Logo } from '@/shared/components/ui/Logo';
 
 const LoginPage: FC = () => {
   return (
@@ -12,8 +12,8 @@ const LoginPage: FC = () => {
       <div className="w-full max-w-[350px] animate-fade-in-up">
         <div className="flex flex-col gap-6 p-4">
           <div className="flex items-center justify-center gap-2 mb-4 animate-fade-in-down">
-            <Sparkles size={24} className="stroke-accent" />
-            <h3 className="">chatty</h3>
+            <Logo />
+            <h3 className="">Aq Chat</h3>
             <div className="h-12 w-[2px] mx-6 bg-background-light"></div>
             <h4>Login</h4>
           </div>

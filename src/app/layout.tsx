@@ -19,7 +19,7 @@ const funnelDisplay = Funnel_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'Chatty',
+  title: 'Aq Chat',
   description: 'Your chatty AI buddy.',
 };
 
