@@ -72,7 +72,7 @@ const Tooltip: React.FC<TooltipProps> = ({
           <motion.div
             ref={tooltipRef}
             className={`absolute z-50 ${positionClass[position]} max-w-64
-              text-nowrap rounded-md bg-background-light backdrop-blur-3xl text-foreground border border-foreground-light px-3 py-1.5 text-sm shadow-md ${className}`}
+              text-nowrap rounded-md bg-background-light backdrop-blur-3xl text-foreground border border-foreground-light/30 px-3 py-1.5 text-sm shadow-md ${className}`}
             initial={positionMap[position].initial}
             animate={positionMap[position].animate}
             exit={{ opacity: 0 }}

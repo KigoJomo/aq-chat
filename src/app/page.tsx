@@ -184,7 +184,7 @@ export default function ChatPage() {
                   <div
                     className={`${
                       message.role === 'user'
-                        ? 'bg-background-light/100 px-3 py-2 rounded-2xl ml-auto max-w-80 md:max-w-[36rem]'
+                        ? 'bg-background-light/100 px-3 py-2 rounded-2xl ml-auto w-fit max-w-80 md:max-w-[36rem]'
                         : 'flex flex-col gap-4 w-full'
                     }`}>
 
@@ -198,7 +198,7 @@ export default function ChatPage() {
                           ${
                             message.role === 'user'
                               ? 'absolute top-2 right-full mr-2 opacity-0 group-hover:opacity-100'
-                              : ''
+                              : '*:hover:stroke-accent'
                           }
                            transition-all cursor-pointer`}
                         aria-label={
@@ -209,7 +209,7 @@ export default function ChatPage() {
                         {copiedMessageIndex === index ? (
                           <Check size={14} className="text-green-500" />
                         ) : (
-                          <CopyIcon size={14} />
+                          <CopyIcon size={14} className='transition-all' />
                         )}
                       </button>
                     </div>
@@ -291,7 +291,7 @@ export default function ChatPage() {
         </div>
 
         <div className="w-full flex items-center justify-between">
-          <Tooltip content='More models coming soon'>
+          <Tooltip content='More models coming soon!'>
             <span className="capitalize text-xs bg-accent/20 px-2 py-1 rounded-full">
               gemini 2.0 flash
             </span>
