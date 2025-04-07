@@ -4,8 +4,7 @@ import { FC, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'; // Should definitely change this to github colors
-import { github } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Check, CopyIcon } from 'lucide-react';
 
 const CodeCopyButton: FC<{ textToCopy: string }> = ({ textToCopy }) => {
@@ -14,7 +13,7 @@ const CodeCopyButton: FC<{ textToCopy: string }> = ({ textToCopy }) => {
   const handleCopy = () => {
     navigator.clipboard.writeText(textToCopy);
     setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+    setTimeout(() => setIsCopied(false), 2000);
   };
 
   return (
@@ -45,7 +44,7 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          code({ inline, className, children, ...props }: any) {
+          code({ inline, className, children, ...rest }: any) {
             const match = /language-(\w+)/.exec(className || '');
             const codeString = String(children).replace(/\n$/, '');
 
@@ -59,45 +58,42 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({
                 <SyntaxHighlighter
                   style={vscDarkPlus}
                   language={match[1]}
-                  // PreTag={'div'}
-                  {...props}>
+                  PreTag={'div'}
+                  {...rest}>
                   {String(children).replace(/\n$/, '')}
                 </SyntaxHighlighter>
               </div>
             ) : (
-              <code className={`${className}`} {...props}>
+              <code className={`${className}`} {...rest}>
                 {String(children).replace(/`/g, 'f')}
                 {/* {children} */}
               </code>
             );
           },
           // customizing other elements
-          a: ({ ...props }) => (
-            <a target="_blank" rel="noopener noreferrer" {...props} />
+          a: ({ ...rest }) => (
+            <a target="_blank" rel="noopener noreferrer" {...rest} />
           ),
-          table: ({ node, ...props }) => (
+          table: ({ ...rest }) => (
             <div className="overflow-x-auto">
               <table
                 className="my-custom-table-class border-collapse border border-foreground-light w-full text-sm overflow-hidden"
-                {...props}
+                {...rest}
               />
             </div>
           ),
-          th: ({ node, ...props }) => (
+          th: ({ ...rest }) => (
             <th
               className="border border-background-light px-2 py-2 bg-background-light/100 font-semibold text-left"
-              {...props}
+              {...rest}
             />
           ),
-          td: ({ node, ...props }) => (
+          td: ({ ...rest }) => (
             <td
               className="border border-background-light px-2 py-1"
-              {...props}
+              {...rest}
             />
           ),
-          // Add other customizations as needed (e.g., h1, p, ul, li)
-          // h1: ({node, ...props}) => <h1 className="text-2xl font-bold mt-4 mb-2" {...props} />,
-          // p: ({node, ...props}) => <p className="mb-4" {...props} />,
         }}>
         {markdownContent}
       </ReactMarkdown>
