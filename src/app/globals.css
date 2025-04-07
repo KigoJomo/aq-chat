@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-/* @plugin "@tailwindcss/typography"; */
+@plugin "@tailwindcss/typography";
 
 :root {
   --background: #131313;
@@ -73,6 +73,7 @@ img {
 
 hr {
   border-color: color-mix(in oklab, var(--foreground-light) 25%, transparent);
+  margin: 0 !important;
 }
 
 * {
@@ -323,4 +324,12 @@ html {
 
 .animate-on-scroll.is-visible {
   opacity: 1;
+}
+
+
+/* ----------------------------------- */
+
+.prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  /* padding: 0 0; */
+  background-color: transparent;
 }

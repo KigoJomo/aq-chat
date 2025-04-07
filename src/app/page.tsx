@@ -1,6 +1,8 @@
 'use client';
 
 import { Logo } from '@/shared/components/ui/Logo';
+import MarkdownRenderer from '@/shared/components/ui/MarkdownRenderer';
+import Tooltip from '@/shared/components/ui/Tooltip';
 import { Check, CopyIcon, LoaderIcon, SendIcon } from 'lucide-react';
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 
@@ -176,17 +178,19 @@ export default function ChatPage() {
                 className={`w-full flex items-start gap-2 ${
                   message.role === 'user'
                     ? 'flex-row-reverse ml-auto'
-                    : 'mr-auto'
+                    : ''
                 }`}>
-                <div className="relative group">
+                <div className="relative group w-full">
                   <div
                     className={`${
                       message.role === 'user'
-                        ? 'bg-background-light/100 px-3 py-2 rounded-2xl max-w-80 md:max-w-[36rem]'
-                        : 'flex flex-col gap-4'
+                        ? 'bg-background-light/100 px-3 py-2 rounded-2xl ml-auto max-w-80 md:max-w-[36rem]'
+                        : 'flex flex-col gap-4 w-full'
                     }`}>
-                    <span>{message.text}</span>
 
+                    <MarkdownRenderer markdownContent={message.text} className="max-w-full prose dark:prose-invert" />
+
+                    {/* button(s) */}
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => copyToClipboard(message.text, index)}
@@ -268,7 +272,7 @@ export default function ChatPage() {
       {/* Input Form */}
       <form
         onSubmit={handleSubmit}
-        className="w-full mt-auto py-3 px-4 bg-background-light border-2 border-transparent shrink-0 rounded-2xl flex flex-col gap-2 focus-within:border-foreground-light/20 transition-all duration-300">
+        className="w-full mt-auto py-3 px-4 bg-background-light border-2 border-transparent shrink-0 rounded-2xl flex flex-col gap-2 focus-within:border-foreground-light/60 transition-all duration-300">
         <div
           className="w-full grid text-sm after:px-2 after:py-1 [&>textarea]:text-inherit after:text-inherit [&>textarea]:resize-none [&>textarea]:overflow-hidden [&>textarea]:[grid-area:1/1/2/2] after:[grid-area:1/1/2/2] after:whitespace-pre-wrap after:invisible after:content-[attr(data-cloned-val)]"
           data-cloned-val={inputValue}>
@@ -279,7 +283,7 @@ export default function ChatPage() {
             value={inputValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Ask me anything ..."
+            placeholder="Ask anything ..."
             disabled={loading}
             className="w-full outline-none focus:outline-none bg-transparent px-2 py-1 text-sm"
             rows={1}
@@ -287,9 +291,11 @@ export default function ChatPage() {
         </div>
 
         <div className="w-full flex items-center justify-between">
-          <span className="capitalize text-xs bg-accent/20 px-2 py-1 rounded-full">
-            gemini 2.0 flash
-          </span>
+          <Tooltip content='More models coming soon'>
+            <span className="capitalize text-xs bg-accent/20 px-2 py-1 rounded-full">
+              gemini 2.0 flash
+            </span>
+          </Tooltip>
           <button
             className={`${
               loading || inputValue === ''

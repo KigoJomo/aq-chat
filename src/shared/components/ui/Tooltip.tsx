@@ -1,5 +1,5 @@
 'use client';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import React, { useState, ReactNode, useRef, useEffect } from 'react';
 
 type TooltipPosition = 'top' | 'right' | 'bottom' | 'left';
