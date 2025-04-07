@@ -21,7 +21,7 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          code({
+          code: ({
             inline,
             className,
             children,
@@ -30,8 +30,8 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({
             inline?: boolean;
             className?: string;
             children?: React.ReactNode;
-            [key: string]: any;
-          }) {
+            // [key: string]: any;
+          }) => {
             const match = /language-(\w+)/.exec(className || '');
             const codeString = String(children).replace(/\n$/, '');
 
@@ -58,6 +58,7 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({
               </span>
             );
           },
+
           // customizing other elements
           a: ({ ...rest }) => (
             <a
