@@ -1,4 +1,3 @@
-// components/ThemeProvider.tsx
 'use client'
 
 import { useThemeStore } from '@/store/ThemeStore';

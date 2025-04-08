@@ -1,3 +1,5 @@
+'use client';
+
 type DeviceType = 'mobileOrTablet' | 'desktop';
 
 export const useDeviceType = (): DeviceType => {
