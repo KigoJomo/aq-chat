@@ -7,10 +7,12 @@ import { LoaderIcon, SendIcon } from 'lucide-react';
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 
 export default function ChatInput() {
-  const value = useInput((state) => state.value)
-  const updateValue = useInput((state) => state.updateValue)
+  const value = useInput((state) => state.value);
+  const updateValue = useInput((state) => state.updateValue);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const deviceType = useDeviceType();
 
   const updateHeight = () => {
     if (textareaRef.current) {
@@ -26,13 +28,11 @@ export default function ChatInput() {
   };
 
   useEffect(() => {
-    console.log('<<<', value)
+    console.log('<<<', value);
     updateHeight();
   }, [value]);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    const deviceType = useDeviceType();
-
     if (
       e.key === 'Enter' &&
       !e.shiftKey &&
