@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Funnel_Display } from 'next/font/google';
 import './globals.css';
 import { Analytics } from '@vercel/analytics/next';
+import ThemeProvider from '@/shared/components/ui/ThemeProvider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -29,12 +30,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${funnelDisplay.variable} antialiased 2xl:container 2xl:mx-auto hide-scrollbar relative`}>
-        {children}
-        <Analytics />
-      </body>
+    <html lang="en" suppressHydrationWarning>
+      <ThemeProvider>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} ${funnelDisplay.variable} antialiased 2xl:container 2xl:mx-auto hide-scrollbar relative`}>
+          {children}
+          <Analytics />
+        </body>
+      </ThemeProvider>
     </html>
   );
 }

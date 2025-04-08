@@ -1,15 +1,11 @@
 'use client';
 
+import { Message } from '@/lib/types/shared_types';
 import { Logo } from '@/shared/components/ui/Logo';
-import MarkdownRenderer from '@/shared/components/ui/MarkdownRenderer';
 import Tooltip from '@/shared/components/ui/Tooltip';
-import { Check, CopyIcon, LoaderIcon, SendIcon } from 'lucide-react';
+import { LoaderIcon, SendIcon } from 'lucide-react';
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
-
-interface Message {
-  role: 'user' | 'model';
-  text: string;
-}
+import ChatHistory from './chat/components/ChatHistory';
 
 const CHAT_HISTORY_KEY = 'chatty-history';
 
@@ -18,10 +14,6 @@ export default function ChatPage() {
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  // Add state for tracking copied message
-  const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(
-    null
-  );
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -58,7 +50,6 @@ export default function ChatPage() {
     }
   }, [chatHistory]);
 
-  // Auto-scroll to bottom when messages change
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -67,7 +58,6 @@ export default function ChatPage() {
     scrollToBottom();
   }, [chatHistory]);
 
-  // Handle keyboard shortcuts for the textarea
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const isMobileOrTablet = () => {
       // Check for touch capability
@@ -88,17 +78,6 @@ export default function ChatPage() {
       handleSubmit(e as unknown as FormEvent<HTMLFormElement>);
     }
     // On mobile/tablet, pressing Enter will create a new line (default behavior)
-  };
-
-  // Updated copy to clipboard function with visual feedback
-  const copyToClipboard = (text: string, index: number) => {
-    navigator.clipboard.writeText(text);
-    setCopiedMessageIndex(index);
-
-    // Reset after 2 seconds
-    setTimeout(() => {
-      setCopiedMessageIndex(null);
-    }, 2000);
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -172,51 +151,7 @@ export default function ChatPage() {
 
         {chatHistory.length > 0 ? (
           <>
-            {chatHistory.map((message, index) => (
-              <div
-                key={index}
-                className={`w-full flex items-start gap-2 ${
-                  message.role === 'user'
-                    ? 'flex-row-reverse ml-auto'
-                    : ''
-                }`}>
-                <div className="relative group w-full">
-                  <div
-                    className={`${
-                      message.role === 'user'
-                        ? 'bg-background-light/100 px-3 py-2 rounded-2xl ml-auto w-fit max-w-80 md:max-w-[36rem]'
-                        : 'flex flex-col gap-4 w-full'
-                    }`}>
-
-                    <MarkdownRenderer markdownContent={message.text} className="max-w-full prose dark:prose-invert" />
-
-                    {/* button(s) */}
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => copyToClipboard(message.text, index)}
-                        className={`
-                          ${
-                            message.role === 'user'
-                              ? 'absolute top-2 right-full mr-2 opacity-0 group-hover:opacity-100'
-                              : '*:hover:stroke-accent'
-                          }
-                           transition-all cursor-pointer`}
-                        aria-label={
-                          copiedMessageIndex === index
-                            ? 'Copied to clipboard'
-                            : 'Copy message'
-                        }>
-                        {copiedMessageIndex === index ? (
-                          <Check size={14} className="text-green-500" />
-                        ) : (
-                          <CopyIcon size={14} className='transition-all' />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+            <ChatHistory history={chatHistory} />
 
             {/* loading indicator when waiting for response */}
             {loading && (
@@ -272,7 +207,7 @@ export default function ChatPage() {
       {/* Input Form */}
       <form
         onSubmit={handleSubmit}
-        className="w-full mt-auto py-3 px-4 bg-background-light border-2 border-transparent shrink-0 rounded-2xl flex flex-col gap-2 focus-within:border-foreground-light/60 transition-all duration-300">
+        className="w-full py-3 px-4 bg-background-light border-2 border-foreground-light/10 shrink-0 rounded-2xl flex flex-col gap-2 focus-within:border-foreground-light/60 transition-all duration-300">
         <div
           className="w-full grid text-sm after:px-2 after:py-1 [&>textarea]:text-inherit after:text-inherit [&>textarea]:resize-none [&>textarea]:overflow-hidden [&>textarea]:[grid-area:1/1/2/2] after:[grid-area:1/1/2/2] after:whitespace-pre-wrap after:invisible after:content-[attr(data-cloned-val)]"
           data-cloned-val={inputValue}>
@@ -291,7 +226,7 @@ export default function ChatPage() {
         </div>
 
         <div className="w-full flex items-center justify-between">
-          <Tooltip content='More models coming soon!'>
+          <Tooltip content="More models coming soon!">
             <span className="capitalize text-xs bg-accent/20 px-2 py-1 rounded-full">
               gemini 2.0 flash
             </span>

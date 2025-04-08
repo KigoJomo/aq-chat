@@ -13,6 +13,14 @@
   --font-ratio: 1.25;
 }
 
+[data-theme='light'] {
+  --foreground: #131313;
+  --foreground-light: #202020;
+
+  --background: #ededed;
+  --background-light: #d3d3d3;
+}
+
 @media (max-width: 768px) {
   :root {
     --font-ratio: 1.5;
@@ -121,7 +129,7 @@ html {
 
     @media (width >= 64rem /* lg */) {
       section {
-        padding: 1rem 16rem;
+        padding: 1rem 20rem;
       }
     }
   }
