@@ -1,16 +1,24 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+
 type DeviceType = 'mobileOrTablet' | 'desktop';
 
 export const useDeviceType = (): DeviceType => {
-  // Check for touch capability
-  const hasTouchScreen =
-    'ontouchstart' in window ||
-    navigator.maxTouchPoints > 0 ||
-    ('msMaxTouchPoints' in window && 'msMaxTouchPoints' in navigator);
+  const [deviceType, setDeviceType] = useState<DeviceType>('desktop');
 
-  // Small screen is a secondary indicator
-  const isSmallScreen = window.innerWidth <= 768;
+  useEffect(() => {
+    // Check for touch capability
+    const hasTouchScreen =
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0 ||
+      ('msMaxTouchPoints' in window && 'msMaxTouchPoints' in navigator);
 
-  return hasTouchScreen || isSmallScreen ? 'mobileOrTablet' : 'desktop';
+    // Small screen is a secondary indicator
+    const isSmallScreen = window.innerWidth <= 768;
+
+    setDeviceType(hasTouchScreen || isSmallScreen ? 'mobileOrTablet' : 'desktop');
+  }, []);
+
+  return deviceType;
 };
