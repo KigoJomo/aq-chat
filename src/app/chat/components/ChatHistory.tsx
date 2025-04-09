@@ -1,23 +1,28 @@
 'use client';
 
 import { useClipBoard } from '@/hooks/useClipboard';
-import { Message } from '@/lib/types/shared_types';
 import MarkdownRenderer from '@/shared/components/ui/MarkdownRenderer';
+import { useChat } from '@/store/ChatStore';
 import { Check, CopyIcon } from 'lucide-react';
 
-interface ChatHistoryProps {
-  history: Message[];
-}
-
-export default function ChatHistory({ history }: ChatHistoryProps) {
+export default function ChatHistory() {
   const { copiedMessageIndex, copyToClipboard } = useClipBoard();
+  const { chatHistory } = useChat();
 
   return (
-    <>
-      {history.map((message, index) => (
+    <div
+      className="
+        md:w-[42rem] md:mx-auto 
+        flex-1 flex flex-col gap-4
+        pb-24
+      ">
+      {chatHistory.map((message, index) => (
         <div
           key={index}
-          className={`w-full flex items-start gap-2 ${
+          className={`
+            w-full flex items-start gap-2
+            animate-fade-in-up
+            ${
             message.role === 'user' ? 'flex-row-reverse ml-auto' : ''
           }`}>
           <div className="relative group w-full">
@@ -59,6 +64,6 @@ export default function ChatHistory({ history }: ChatHistoryProps) {
           </div>
         </div>
       ))}
-    </>
+    </div>
   );
 }
