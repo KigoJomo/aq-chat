@@ -1,18 +1,23 @@
-export interface Attachment{
-  // type: 'image' | 'file'
-  url: string
+export interface Attachment {
+  _id?: string;
+  type?: 'image' | 'file';
+  url: string;
 }
 
 export interface Message {
+  _id?: string;
+  chatId: string;
   role: 'user' | 'model';
   text: string;
-  attachments?: Attachment[]
-  // probaly should indicate which model gave the output
-  model?: string
+  attachments?: Attachment[];
+  timestamp: Date
+  modelName?: string;
 }
 
-export interface ChatData{
-  id: string
-  title: string
-  chatHistory: Message[]
+export interface Chat {
+  _id?: string;
+  userId: string;
+  title: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

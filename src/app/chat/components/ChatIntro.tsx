@@ -14,7 +14,8 @@ export default function ChatIntro() {
 
   return (
     <div className="w-full my-auto flex flex-col items-center gap-4">
-      <Logo size={128} className="opacity-50" />
+      <Logo size={128} />
+      
       <div className="text-center">
         <h1 className="text-solid-foreground mb-2 !normal-case">
           Hi 👋, I&apos;m Aq!

@@ -23,7 +23,7 @@
 
 @media (max-width: 768px) {
   :root {
-    --font-ratio: 1.5;
+    --font-ratio: 1.25;
     --font-size: 1.2rem;
   }
 }
@@ -49,7 +49,9 @@ h4 {
 }
 
 h1 {
-  font-size: calc(var(--font-size) * var(--font-ratio) * var(--font-ratio) * var(--font-ratio));
+  font-size: calc(
+    var(--font-size) * var(--font-ratio) * var(--font-ratio) * var(--font-ratio)
+  );
   text-transform: uppercase;
 }
 
@@ -103,33 +105,35 @@ html {
 
   body {
     height: 100dvh;
-    overflow-x: hidden;
-    overflow-y: scroll;
+    overflow: hidden;
 
     background: var(--background);
     color: var(--foreground);
     font-family: var(--font-funnel-display);
 
-    section {
-      width: 100%;
-      /* padding: 1rem 2rem; */
-    }
+    main {
 
-    @media (width < 40rem) {
+      /* header{} */
       section {
-        padding: 1rem 0.75rem;
+        width: 100%;
       }
-    }
 
-    @media (width >= 48rem /* md */) {
-      section {
-        padding: 1rem 2rem;
+      @media (width < 40rem) {
+        section {
+          padding: 1rem 0.75rem;
+        }
       }
-    }
 
-    @media (width >= 64rem /* lg */) {
-      section {
-        padding: 1rem 20rem;
+      @media (width >= 48rem /* md */) {
+        section {
+          padding: 1rem 2rem;
+        }
+      }
+
+      @media (width >= 64rem /* lg */) {
+        section {
+          padding: 1rem 2rem;
+        }
       }
     }
   }
@@ -334,10 +338,9 @@ html {
   opacity: 1;
 }
 
-
 /* ----------------------------------- */
 
-.prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+.prose :where(pre):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
   /* padding: 0 0; */
   background-color: transparent;
 }

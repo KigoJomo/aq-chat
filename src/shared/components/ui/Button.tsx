@@ -29,7 +29,7 @@ const Button: React.FC<ButtonProps> = ({
   const variantStyles = {
     primary: 'bg-foreground text-background hover:bg-foreground-light',
     outline:
-      'bg-transparent border border-background-light text-foreground hover:bg-background-light',
+      'bg-transparent border border-foreground-light/40 text-foreground hover:bg-background-light',
   };
 
   // Define size styles

@@ -2,15 +2,13 @@ import { FC } from 'react';
 
 interface LogoProps {
   size?: number;
-  className?: string
 }
 
-export const Logo: FC<LogoProps> = ({ size = 24, className='' }) => {
+export const Logo: FC<LogoProps> = ({ size = 24 }) => {
   return (
     <svg
       width={size * 1.163323782}
       height={size}
-      className={`${className}`}
       viewBox="0 0 406 349"
       fill="none"
       xmlns="http://www.w3.org/2000/svg">
