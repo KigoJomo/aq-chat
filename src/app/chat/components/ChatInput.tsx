@@ -10,6 +10,8 @@ import { Message } from '@/lib/types/shared_types';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
+const MAX_LENGTH = 10000;
+
 export default function ChatInput() {
   const value = useInput((state) => state.value);
   const { chatId, updateId, addChatToList } = useChat();
@@ -148,7 +150,7 @@ export default function ChatInput() {
               "scrollbar-thin scrollbar-thumb-foreground/10 scrollbar-track-transparent"
             )}
             rows={1}
-            maxLength={2000}
+            maxLength={MAX_LENGTH}
           />
 
           <div className="flex items-center justify-between gap-4 pt-4">
@@ -188,7 +190,7 @@ export default function ChatInput() {
 
           {value.length > 0 && (
             <span className="absolute bottom-14 right-0 text-xs text-foreground/50">
-              {value.length}/2000
+              {value.length}/MAX_LENGTH
             </span>
           )}
         </div>
