@@ -190,7 +190,7 @@ export default function ChatInput() {
 
           {value.length > 0 && (
             <span className="absolute bottom-14 right-0 text-xs text-foreground/50">
-              {value.length}/MAX_LENGTH
+              {value.length}/{MAX_LENGTH}
             </span>
           )}
         </div>
