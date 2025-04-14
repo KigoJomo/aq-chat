@@ -38,6 +38,12 @@ interface ChatState {
   // Modified fields to track loading states separately
   isLoadingChats: boolean;
   isLoadingMessages: boolean;
+
+  // New actions
+  renameChat: (id: string, newTitle: string) => void;
+  deleteAllChats: () => Promise<void>;
+  exportChat: (id: string) => void;
+  deleteChat: (id: string) => Promise<void>;
 }
 
 export const useChat = create<ChatState>()(
@@ -262,6 +268,118 @@ export const useChat = create<ChatState>()(
         } finally {
           // Only reset message loading state
           set({ isLoadingMessages: false });
+        }
+      },
+
+      // New actions
+      renameChat: async (id, newTitle) => {
+        try {
+          // First, update the state optimistically
+          set((state) => ({
+            chats: state.chats.map((chat) =>
+              chat._id === id ? { ...chat, title: newTitle } : chat
+            ),
+          }));
+
+          // If this is the current chat, update its title too
+          if (get().chatId === id) {
+            set({ title: newTitle });
+          }
+
+          // Then make the API call
+          const response = await fetch(`/api/chats/${id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ title: newTitle }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to rename chat');
+          }
+        } catch (error) {
+          console.error('Error renaming chat:', error);
+          // Reload chats to restore state in case of failure
+          get().fetchChats();
+          set({ error: 'Failed to rename chat' });
+        }
+      },
+
+      deleteAllChats: async () => {
+        const previousChats = get().chats;
+        try {
+          // Optimistically clear the UI first
+          set({ chats: [] });
+
+          // Clear current chat if there is one
+          get().clearChat();
+
+          // Make API request
+          const response = await fetch('/api/chats', {
+            method: 'DELETE',
+          });
+
+          if (!response.ok) {
+            // log the error:
+            const errorData = await response.json();
+            console.error('Error deleting all chats:', errorData);
+            throw new Error('Failed to delete all chats');
+          }
+          window.location.href = '/chat';
+        } catch (error) {
+          console.error('Error deleting all chats:', error);
+          set({
+            chats: previousChats,
+            error: 'Failed to delete all chats',
+          });
+        }
+      },
+
+      exportChat: (id) => {
+        const { chats } = get();
+        const chat = chats.find((c) => c._id === id);
+
+        if (!chat) return;
+
+        // Export logic - example creates a downloadable text file
+        const content = JSON.stringify(chat, null, 2);
+        const blob = new Blob([content], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `chat-${chat.title.replace(/\s+/g, '-')}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      },
+
+      deleteChat: async (id) => {
+        try {
+          // Optimistically remove from UI first
+          set((state) => ({
+            chats: state.chats.filter((chat) => chat._id !== id),
+          }));
+
+          // If current chat is being deleted, clear the state
+          if (get().chatId === id) {
+            get().clearChat();
+          }
+
+          // Make API request to delete the chat
+          const response = await fetch(`/api/chats/${id}`, {
+            method: 'DELETE',
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to delete chat');
+          }
+        } catch (error) {
+          console.error('Error deleting chat:', error);
+          // Reload chats to restore state in case of failure
+          get().fetchChats();
+          set({ error: 'Failed to delete chat' });
         }
       },
     }),

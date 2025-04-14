@@ -10,10 +10,10 @@ import {
 import { Geist, Geist_Mono, Funnel_Display } from 'next/font/google';
 import './globals.css';
 import { Analytics } from '@vercel/analytics/next';
-import ThemeProvider from '@/shared/components/ui/ThemeProvider';
 import Button from '@/shared/components/ui/Button';
 import Header from '@/shared/components/navigation/Header';
 import SideBar from '@/shared/components/navigation/SideBar';
+import { ThemeProvider } from 'next-themes';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -43,9 +43,9 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
-        <ThemeProvider>
-          <body
-            className={`${geistSans.variable} ${geistMono.variable} ${funnelDisplay.variable} antialiased overflow-hidden flex`}>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} ${funnelDisplay.variable} antialiased overflow-hidden flex`}>
+          <ThemeProvider>
             <SideBar />
             <main className="w-full h-dvh flex flex-col overflow-y-scroll custom-scrollbar">
               <Header>
@@ -63,16 +63,15 @@ export default function RootLayout({
                     </SignUpButton>
                   </div>
                 </SignedOut>
-
                 <SignedIn>
                   <UserButton />
                 </SignedIn>
               </Header>
               {children}
             </main>
-            <Analytics />
-          </body>
-        </ThemeProvider>
+          </ThemeProvider>
+          <Analytics />
+        </body>
       </html>
     </ClerkProvider>
   );

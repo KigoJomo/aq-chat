@@ -4,7 +4,7 @@ import Link from 'next/link';
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   href?: string;
-  variant?: 'primary' | 'outline';
+  variant?: 'primary' | 'outline' | "danger";
   size?: 'default' | 'sm' | 'lg';
   className?: string;
   type?: 'button' | 'submit' | 'reset';
@@ -30,6 +30,7 @@ const Button: React.FC<ButtonProps> = ({
     primary: 'bg-foreground text-background hover:bg-foreground-light',
     outline:
       'bg-transparent border border-foreground-light/40 text-foreground hover:bg-background-light',
+    danger: 'bg-red-500 text-background hover:bg-red-600',
   };
 
   // Define size styles
