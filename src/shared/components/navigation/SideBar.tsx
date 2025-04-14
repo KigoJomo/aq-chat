@@ -14,9 +14,14 @@ import { useAuth } from '@clerk/nextjs';
 import { cn } from '@/lib/utils';
 import Tooltip from '@/shared/components/ui/Tooltip';
 import { Skeleton } from '../ui/Skeleton';
+import { useDeviceType } from '../../../hooks/useDeviceType';
 
 const SideBar: FC = () => {
-  const [panelOpen, setPanelOpen] = useState(false);
+  const deviceType = useDeviceType();
+
+  const [panelOpen, setPanelOpen] = useState(
+    deviceType === 'mobileOrTablet' ? false : true
+  );
   const [isMounted, setIsMounted] = useState(false);
   const { sessionId } = useAuth();
   const {
@@ -52,8 +57,8 @@ const SideBar: FC = () => {
 
   // Modified function to ensure chat state is fully cleared
   const handleNewChatClick = () => {
+    setPanelOpen(deviceType === 'mobileOrTablet' ? false : panelOpen);
     clearChat();
-    // Force navigation to ensure we fully reset the UI state
     window.location.href = '/chat';
   };
 
@@ -91,11 +96,10 @@ const SideBar: FC = () => {
           )}
         </div>
 
-        {/* New Chat Button - Modified to use our new handler */}
         <Link
           href="/chat"
           onClick={(e) => {
-            e.preventDefault(); // Prevent default to handle navigation manually
+            e.preventDefault();
             handleNewChatClick();
           }}
           className={cn(
@@ -111,7 +115,7 @@ const SideBar: FC = () => {
           )}
         </Link>
         {/* Chat List */}
-        <div className="w-full flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-foreground/10 scrollbar-track-transparent">
+        <div className="w-full flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-foreground/10 scrollbar-track-transparent flex flex-col gap-1">
           {isLoadingChats ? (
             Array.from({ length: 5 }).map((_, i) => (
               <Skeleton
@@ -132,7 +136,12 @@ const SideBar: FC = () => {
               <Link
                 key={chat._id}
                 href={`/chat/${chat._id}`}
-                onClick={() => updateId(chat._id!)}
+                onClick={() => {
+                  updateId(chat._id!);
+                  setPanelOpen(
+                    deviceType === 'mobileOrTablet' ? false : panelOpen
+                  );
+                }}
                 className={cn(
                   'w-full flex items-center gap-2 p-2 rounded-lg',
                   'text-sm transition-colors duration-200',

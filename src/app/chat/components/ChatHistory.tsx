@@ -13,7 +13,7 @@ export default function ChatHistory() {
     <div
       className="
         md:w-[42rem] md:mx-auto 
-        flex-1 flex flex-col gap-4
+        flex-1 flex flex-col gap-8
         pb-24
       ">
       {chatHistory.map((message, index) => (

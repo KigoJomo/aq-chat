@@ -57,6 +57,7 @@ export const useChat = create<ChatState>()(
       inputValue: '',
 
       // Chat actions
+      // TODO: split this into updateId and loadChat
       updateId: async (newId) => {
         try {
           const res = await fetch(`/api/chat/${newId}`);
@@ -87,13 +88,12 @@ export const useChat = create<ChatState>()(
       setChatHistory: (history) => set({ chatHistory: history }),
 
       clearChat: () => {
-        // Enhanced version to ensure complete state reset
         set({
           chatId: null,
           title: null,
           chatHistory: [],
           inputValue: '',
-          // Add any other state that might need resetting
+          // any other state that might need resetting
           error: null,
         });
       },

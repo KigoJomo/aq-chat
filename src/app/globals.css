@@ -9,7 +9,7 @@
   --accent: #1267dd;
   --test: #68a7ff;
 
-  --font-size: 1rem;
+  --font-size: 0.95rem;
   --font-ratio: 1.25;
 }
 
@@ -24,7 +24,7 @@
 @media (max-width: 768px) {
   :root {
     --font-ratio: 1.25;
-    --font-size: 1.2rem;
+    --font-size: 0.9rem;
   }
 }
 
@@ -63,7 +63,7 @@ h3 {
   font-size: calc(var(--font-size) * var(--font-ratio));
 }
 
-h4 {
+h4, p {
   font-size: calc(var(--font-size));
 }
 
@@ -120,7 +120,7 @@ html {
 
       @media (width < 40rem) {
         section {
-          padding: 1rem 0.75rem;
+          padding: 1rem 1.2rem;
         }
       }
 

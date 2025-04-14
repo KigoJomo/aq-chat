@@ -2,13 +2,11 @@
 
 import { useDeviceType } from '@/hooks/useDeviceType';
 import Tooltip from '@/shared/components/ui/Tooltip';
-import { LoaderIcon, SendIcon } from 'lucide-react';
+import { LoaderCircle, SendIcon } from 'lucide-react';
 import { ChangeEvent, KeyboardEvent, useEffect, useRef } from 'react';
 import { useChat } from '@/store/ChatStore';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-
-const MAX_LENGTH = 10000;
 
 export default function ChatInput() {
   const {
@@ -58,7 +56,7 @@ export default function ChatInput() {
   };
 
   return (
-    <div className="sticky bottom-2 w-full bg-background/95 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
+    <div className="sticky bottom-2 w-full rounded-2xl bg-background/95 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
       <div
         className={cn(
           'mx-auto max-w-3xl px-4 py-4',
@@ -81,7 +79,6 @@ export default function ChatInput() {
               'scrollbar-thin scrollbar-thumb-foreground/10 scrollbar-track-transparent'
             )}
             rows={1}
-            maxLength={MAX_LENGTH}
           />
 
           <div className="flex items-center justify-between gap-4 pt-4">
@@ -111,17 +108,12 @@ export default function ChatInput() {
               )}
               aria-label={loading ? 'Processing...' : 'Send message'}>
               {loading ? (
-                <LoaderIcon className="w-5 h-5 animate-spin" />
+                <LoaderCircle className="w-5 h-5 animate-spin" />
               ) : (
                 <SendIcon className="w-5 h-5 text-foreground/80 hover:text-foreground" />
               )}
             </button>
           </div>
-          {value.length > 0 && (
-            <span className="absolute bottom-14 right-0 text-xs text-foreground/50">
-              {value.length}/{MAX_LENGTH}
-            </span>
-          )}
         </div>
       </div>
     </div>
