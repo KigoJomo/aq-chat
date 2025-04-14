@@ -232,7 +232,10 @@ const SideBar: FC = () => {
       {isSettingsOpen && (
         <SettingsModal
           isOpen={isSettingsOpen}
-          onClose={() => setIsSettingsOpen(false)}
+          onClose={() => {
+            setPanelOpen(deviceType === 'mobileOrTablet' ? false : panelOpen)
+            setIsSettingsOpen(false);
+          }}
         />
       )}
     </>
