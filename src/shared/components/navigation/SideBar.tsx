@@ -194,7 +194,10 @@ const SideBar: FC = () => {
         </div>
         {/* Settings Button */}
         <button
-          onClick={() => setIsSettingsOpen(true)}
+          onClick={() => {
+            setPanelOpen(deviceType === 'mobileOrTablet' ? false : panelOpen)
+            setIsSettingsOpen(true);
+          }}
           className={cn(
             'w-full flex items-center gap-2 p-2 rounded-xl',
             'text-sm transition-colors duration-200 hover:bg-accent/15',
@@ -216,10 +219,7 @@ const SideBar: FC = () => {
         } transition-all duration-300`}></div>
 
       <button
-        onClick={() => {
-          setPanelOpen(deviceType === 'mobileOrTablet' ? false : panelOpen)
-          togglePanel();
-        }}
+        onClick={togglePanel}
         className={`flex md:hidden absolute top-4 left-4 z-[60] p-1.5 rounded-lg hover:bg-accent/10 ${
           panelOpen ? 'opacity-0' : 'opacity-100'
         } transition-all duration-300`}
