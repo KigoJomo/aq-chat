@@ -1,10 +1,16 @@
-import dbConnect from "@/lib/db/dbConnect";
-import Chat from "@/models/Chat";
-import Message from "@/models/Message";
+import dbConnect from '@/lib/db/dbConnect';
+import Chat from '@/models/Chat';
+import Message from '@/models/Message';
 
-import { Message as MessageInterface } from "@/lib/types/shared_types"
+import {
+  Chat as ChatInterface,
+  Message as MessageInterface,
+} from '@/lib/types/shared_types';
 
-export async function createNewChat(userId: string, title: string) {
+export async function createNewChat(
+  userId: string,
+  title: string
+): Promise<ChatInterface> {
   await dbConnect();
 
   const newChat = new Chat({

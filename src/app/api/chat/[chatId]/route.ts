@@ -1,4 +1,19 @@
-// src/app/api/chat/[chatId]/route.ts
+/**
+ * API route handler for retrieving chat and message history
+ * 
+ * @route GET /api/chat/[chatId]
+ * @param {Request} req - The incoming HTTP request object
+ * @param {Object} params - Route parameters
+ * @param {Promise<{chatId: string}>} params.params - Contains the chat ID from the URL
+ * @returns {Promise<NextResponse>} JSON response containing:
+ * - On success: {chat: ChatDocument, chatHistory: MessageDocument[]}
+ * - On error:
+ *   - 401 if user is not authenticated
+ *   - 404 if chat is not found
+ *   - 500 for internal server errors
+ * @throws {Error} When database connection or query fails
+ */
+
 
 import dbConnect from '@/lib/db/dbConnect';
 import Chat from '@/models/Chat';
@@ -15,7 +30,6 @@ export async function GET(
   try {
     const { userId } = await auth();
     const { chatId } = await params;
-    // console.log(`Chatid: ${chatId}\nUser id: ${userId}`)
 
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

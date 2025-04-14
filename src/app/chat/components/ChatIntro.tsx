@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
 import { Logo } from '@/shared/components/ui/Logo';
-import { useInput } from '@/store/InputStore';
+import { useChat } from '@/store/ChatStore';
 
 export default function ChatIntro() {
   const suggestions = [
@@ -10,12 +10,12 @@ export default function ChatIntro() {
     'How do I learn coding?',
   ];
 
-  const updateValue = useInput((state) => state.updateValue)
+  const updateInputValue = useChat((state) => state.updateInputValue);
 
   return (
     <div className="w-full my-auto flex flex-col items-center gap-4">
       <Logo size={128} />
-      
+
       <div className="text-center">
         <h1 className="text-solid-foreground mb-2 !normal-case">
           Hi 👋, I&apos;m Aq!
@@ -26,8 +26,7 @@ export default function ChatIntro() {
             <button
               key={suggestion}
               className="bg-background-light hover:bg-background-light/80 px-3 py-2 rounded-lg text-sm cursor-pointer transition-all duration-300"
-              onClick={() => updateValue(suggestion)}
-            >
+              onClick={() => updateInputValue(suggestion)}>
               {suggestion}
             </button>
           ))}

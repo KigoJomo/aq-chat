@@ -1,12 +1,6 @@
-import { Logo } from '@/shared/components/ui/Logo';
+import { redirect } from 'next/navigation';
 
-export default function HomePage() {
-  return (
-    <section className="flex-1 flex flex-col items-center justify-center gap-6">
-      <Logo size={256} />
-      <h1 className="text-solid-foreground mb-2 !normal-case">
-        Hi 👋, I&apos;m Aq!
-      </h1>
-    </section>
-  );
+export default function Home() {
+  // Redirect to /chat which is the main application entry point
+  redirect('/chat');
 }

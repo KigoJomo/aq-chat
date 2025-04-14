@@ -25,7 +25,7 @@ const SideBar: FC = () => {
     updateId,
     fetchChats,
     clearChat,
-    isLoading: isChatsLoading,
+    isLoadingChats, // Use the specific loading state
     error,
   } = useChat();
 
@@ -46,9 +46,16 @@ const SideBar: FC = () => {
     if (sessionId) {
       fetchChats();
     }
-  }, [sessionId]);
+  }, [sessionId, fetchChats]);
 
   const togglePanel = () => setPanelOpen(!panelOpen);
+
+  // Modified function to ensure chat state is fully cleared
+  const handleNewChatClick = () => {
+    clearChat();
+    // Force navigation to ensure we fully reset the UI state
+    window.location.href = '/chat';
+  };
 
   return (
     <>
@@ -84,10 +91,13 @@ const SideBar: FC = () => {
           )}
         </div>
 
-        {/* New Chat Button */}
+        {/* New Chat Button - Modified to use our new handler */}
         <Link
           href="/chat"
-          onClick={clearChat}
+          onClick={(e) => {
+            e.preventDefault(); // Prevent default to handle navigation manually
+            handleNewChatClick();
+          }}
           className={cn(
             'w-full flex items-center gap-2 p-2 rounded-xl',
             'transition-all duration-200 hover:bg-accent/15',
@@ -102,7 +112,7 @@ const SideBar: FC = () => {
         </Link>
         {/* Chat List */}
         <div className="w-full flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-foreground/10 scrollbar-track-transparent">
-          {isChatsLoading ? (
+          {isLoadingChats ? (
             Array.from({ length: 5 }).map((_, i) => (
               <Skeleton
                 key={i}
@@ -127,7 +137,7 @@ const SideBar: FC = () => {
                   'w-full flex items-center gap-2 p-2 rounded-lg',
                   'text-sm transition-colors duration-200',
                   'hover:bg-accent/10',
-                  chat._id === chatId
+                  chat._id === chatId // Only highlight if IDs match and chatId is not null
                     ? 'bg-accent/15 text-accent font-medium'
                     : 'text-foreground/75',
                   panelOpen ? 'px-3' : 'justify-center'
@@ -169,12 +179,16 @@ const SideBar: FC = () => {
       <div
         onClick={togglePanel}
         className={`inset-0 absolute md:hidden bg-background z-[55] ${
-          panelOpen ? 'opacity-80 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          panelOpen
+            ? 'opacity-80 pointer-events-auto'
+            : 'opacity-0 pointer-events-none'
         } transition-all duration-300`}></div>
 
       <button
         onClick={togglePanel}
-        className={`flex md:hidden absolute top-4 left-4 z-[60] p-1.5 rounded-lg hover:bg-accent/10 ${panelOpen? 'opacity-0' : 'opacity-100'} transition-all duration-300`}
+        className={`flex md:hidden absolute top-4 left-4 z-[60] p-1.5 rounded-lg hover:bg-accent/10 ${
+          panelOpen ? 'opacity-0' : 'opacity-100'
+        } transition-all duration-300`}
         aria-label={panelOpen ? 'Collapse sidebar' : 'Expand sidebar'}>
         {panelOpen ? (
           <PanelRightOpen className="w-5 h-5 text-foreground/75" />

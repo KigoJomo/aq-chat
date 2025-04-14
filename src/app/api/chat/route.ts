@@ -1,7 +1,13 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { getChatHistory, saveMessageToDb } from '../actions/db';
-import { generateAIResponse } from '../actions/ai';
+import { createNewChat, getChatHistory, saveMessageToDb } from '../actions/db';
+import { generateAIResponse, generateChatTitle } from '../actions/ai';
+import {
+  Message as MessageInterface,
+  Chat as ChatInterface,
+} from '@/lib/types/shared_types';
+import Chat from '@/models/Chat';
+import mongoose from 'mongoose';
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,51 +18,134 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Please log in' }, { status: 401 });
     }
 
-    if (!chatId) {
-      console.log('\n\n >>>> Invalid chat id', chatId)
-      return NextResponse.json({ error: 'Invalid chat id' }, { status: 400 });
-    }
-
     if (!prompt) {
-      console.log('Message is required')
       return NextResponse.json(
         { error: 'Message is required' },
         { status: 400 }
       );
     }
 
-    const chatHistory = await getChatHistory(chatId)
+    let chatHistory: MessageInterface[] = [];
+    const isNewChat = !chatId;
 
-    const savedUserMessage = await saveMessageToDb(chatId, 'user', prompt)
+    // If chatId provided, verify it exists and belongs to user
+    if (chatId) {
+      try {
+        if (!mongoose.Types.ObjectId.isValid(chatId)) {
+          return NextResponse.json(
+            { error: 'Invalid chat ID' },
+            { status: 400 }
+          );
+        }
 
-    const aiResponse: string | NextResponse<{ error: string; }> = await generateAIResponse(prompt, chatHistory)
+        // Check if chat exists and belongs to user
+        const existingChat = await Chat.findOne({ _id: chatId, userId }).lean();
+        if (!existingChat) {
+          return NextResponse.json(
+            { error: 'Chat not found' },
+            { status: 404 }
+          );
+        }
 
-    // Save AI response to database if it's a string (not an error)
-    let savedAiMessage;
-    if (typeof aiResponse === 'string') {
-      savedAiMessage = await saveMessageToDb(chatId, 'model', aiResponse);
-      
-      return NextResponse.json({
-        userMessage: savedUserMessage.toObject(),
-        aiMessage: savedAiMessage.toObject()
-      });
-    } else {
+        // Get chat history for context
+        chatHistory = await getChatHistory(chatId);
+      } catch (error) {
+        console.error('Error validating chat:', error);
+        return NextResponse.json(
+          { error: 'Failed to load chat' },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Generate AI response - do this first for better UX
+    const aiResponse: string | NextResponse<{ error: string }> =
+      await generateAIResponse(prompt, chatHistory);
+
+    if (typeof aiResponse !== 'string') {
       // If aiResponse is already a NextResponse with an error
       return aiResponse;
     }
 
-    /*
-    this is an existing chat, so:
-      - save user message to db
-      - get AI response
-      - save AI response to db
-      - send to client:
-        - saved user message
-        - AI response
-    */
+    // After getting AI response, handle database operations
+    let responseData = {};
 
-    /*  */
+    // For new chats, create a chat entry
+    if (isNewChat) {
+      try {
+        const chatTitle = generateChatTitle(prompt);
+        const newChat: ChatInterface = await createNewChat(userId, chatTitle);
+
+        // Save user message
+        const userMessage = await saveMessageToDb(newChat._id!, 'user', prompt);
+
+        // Save AI response
+        const aiMessage = await saveMessageToDb(
+          newChat._id!,
+          'model',
+          aiResponse
+        );
+
+        responseData = {
+          isNewChat: true,
+          aiResponse,
+          chat: {
+            _id: newChat._id,
+            title: newChat.title,
+            createdAt: newChat.createdAt,
+            updatedAt: newChat.updatedAt,
+          },
+          messages: {
+            user: userMessage.toObject(),
+            ai: aiMessage.toObject(),
+          },
+        };
+      } catch (error) {
+        console.error('Error creating new chat:', error);
+        // Still return the AI response even if DB operations failed
+        return NextResponse.json(
+          {
+            isNewChat: true,
+            aiResponse,
+            error: 'Chat created but failed to save messages',
+          },
+          { status: 207 }
+        ); // 207 Multi-Status - partial success
+      }
+    } else {
+      // For existing chats, just save the messages
+      try {
+        const userMessage = await saveMessageToDb(chatId, 'user', prompt);
+        const aiMessage = await saveMessageToDb(chatId, 'model', aiResponse);
+
+        responseData = {
+          isNewChat: false,
+          aiResponse,
+          messages: {
+            user: userMessage.toObject(),
+            ai: aiMessage.toObject(),
+          },
+        };
+      } catch (error) {
+        console.error('Error saving messages:', error);
+        // Still return the AI response even if DB operations failed
+        return NextResponse.json(
+          {
+            isNewChat: false,
+            aiResponse,
+            error: 'Failed to save messages',
+          },
+          { status: 207 }
+        );
+      }
+    }
+
+    return NextResponse.json(responseData);
   } catch (error) {
-    console.error(error);
+    console.error('Unexpected error in chat API:', error);
+    return NextResponse.json(
+      { error: 'An unexpected error occurred' },
+      { status: 500 }
+    );
   }
 }
