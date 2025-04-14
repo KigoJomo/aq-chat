@@ -216,7 +216,10 @@ const SideBar: FC = () => {
         } transition-all duration-300`}></div>
 
       <button
-        onClick={togglePanel}
+        onClick={() => {
+          setPanelOpen(deviceType === 'mobileOrTablet' ? false : panelOpen)
+          togglePanel();
+        }}
         className={`flex md:hidden absolute top-4 left-4 z-[60] p-1.5 rounded-lg hover:bg-accent/10 ${
           panelOpen ? 'opacity-0' : 'opacity-100'
         } transition-all duration-300`}
@@ -232,10 +235,7 @@ const SideBar: FC = () => {
       {isSettingsOpen && (
         <SettingsModal
           isOpen={isSettingsOpen}
-          onClose={() => {
-            setPanelOpen(deviceType === 'mobileOrTablet' ? false : panelOpen)
-            setIsSettingsOpen(false);
-          }}
+          onClose={() => setIsSettingsOpen(false)}
         />
       )}
     </>
