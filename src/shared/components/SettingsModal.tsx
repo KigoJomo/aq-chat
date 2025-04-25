@@ -56,10 +56,10 @@ const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="bg-background-light relative rounded-xl border border-foreground-light/30 shadow-xl w-full max-w-md overflow-hidden">
+          className="bg-background-light relative rounded-xl border border-foreground-light/30 shadow-xl w-full max-w-md aspect-[4/3] overflow-hidden">
           {/* Header */}
           <div className="flex justify-between items-center p-4 border-b border-foreground-light/30">
-            <h2 className="font-medium">Settings</h2>
+            <h3 className="!font-normal">Settings</h3>
             <button
               onClick={onClose}
               className="p-1 rounded-full hover:bg-foreground/10 transition-colors">
