@@ -42,11 +42,9 @@ export async function generateAIResponse(prompt: string, history: MessageInterfa
  * @returns A suitable title for the chat
  */
 export function generateChatTitle(prompt: string): string {
-  // Take the first few words as the title
-  const maxTitleLength = 40;
+  const maxTitleLength = 30;
   let title = prompt.trim().substring(0, maxTitleLength);
   
-  // If we cut in the middle of a word, find the last space and trim there
   if (title.length === maxTitleLength && prompt.length > maxTitleLength) {
     const lastSpaceIndex = title.lastIndexOf(' ');
     if (lastSpaceIndex > 0) {
@@ -54,10 +52,9 @@ export function generateChatTitle(prompt: string): string {
     }
   }
   
-  // Add ellipsis if we truncated the prompt
   if (prompt.length > title.length) {
     title += '...';
   }
   
-  return title || 'New Chat'; // Fallback to "New Chat" if prompt is empty
+  return title || 'New Chat';
 }

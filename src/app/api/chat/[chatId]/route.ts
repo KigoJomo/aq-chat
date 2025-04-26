@@ -1,64 +1,68 @@
-/**
- * API route handler for retrieving chat and message history
- * 
- * @route GET /api/chat/[chatId]
- * @param {Request} req - The incoming HTTP request object
- * @param {Object} params - Route parameters
- * @param {Promise<{chatId: string}>} params.params - Contains the chat ID from the URL
- * @returns {Promise<NextResponse>} JSON response containing:
- * - On success: {chat: ChatDocument, chatHistory: MessageDocument[]}
- * - On error:
- *   - 401 if user is not authenticated
- *   - 404 if chat is not found
- *   - 500 for internal server errors
- * @throws {Error} When database connection or query fails
- */
-
-
-import dbConnect from '@/lib/db/dbConnect';
-import Chat from '@/models/Chat';
-import Message from '@/models/Message';
-import { auth } from '@clerk/nextjs/server';
+import { deleteChat, getChatAndHistory, updateTitle } from '@/data/chat';
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * API handler for retrieving a chat and message history
+ * PATCH /api/chat/[chatId]
+ */
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ chatId: string }> }
 ) {
   try {
-    const { userId } = await auth();
     const { chatId } = await params;
 
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    await dbConnect();
-
-    const chat = await Chat.findOne({
-      _id: chatId,
-      userId,
-    }).lean();
-
-    if (!chat) {
-      return NextResponse.json({ error: 'Chat not found' }, { status: 404 });
-    }
-
-    const messages = await Message.find({ chatId })
-      .sort({ timestamp: 1 })
-      .lean();
-    
-    return NextResponse.json({
-      chat: chat,
-      chatHistory: messages
-    })
+    getChatAndHistory(chatId);
   } catch (error) {
     console.error(`Error fetching chat: ${error}`);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
-    )
+    );
+  }
+}
+
+/**
+ * API handler for updating a chat title
+ * PATCH /api/chat/[chatId]
+ */
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ chatId: string }> }
+) {
+  try {
+    const { chatId } = await params;
+    const { title } = await req.json();
+
+    await updateTitle(chatId, title);
+  } catch (error) {
+    console.error(`Error updating chat: ${error}`);
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * API handler for deleting a specific chat
+ * DELETE /api/chat/[chatId]
+ */
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ chatId: string }> }
+) {
+  try {
+    const { chatId } = await params;
+
+    await deleteChat(chatId);
+  } catch (error) {
+    console.error(`Error deleting chat: ${error}`);
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }

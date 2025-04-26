@@ -1,5 +1,3 @@
-// fetch all chats
-
 import dbConnect from '@/lib/db/dbConnect';
 import Chat from '@/models/Chat';
 import Message from '@/models/Message';

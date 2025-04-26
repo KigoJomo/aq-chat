@@ -1,3 +1,5 @@
+export type Role = 'user' | 'model';
+
 export interface Attachment {
   _id?: string;
   type?: 'image' | 'file';
@@ -7,10 +9,10 @@ export interface Attachment {
 export interface Message {
   _id?: string;
   chatId: string;
-  role: 'user' | 'model';
+  role: Role;
   text: string;
   attachments?: Attachment[];
-  timestamp: Date
+  timestamp: Date;
   modelName?: string;
 }
 

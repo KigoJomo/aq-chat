@@ -108,7 +108,7 @@ html {
   padding: 0;
 
   body {
-    height: 100dvh;
+    height: 100%;
     overflow: hidden;
 
     background: var(--background);
