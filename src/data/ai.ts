@@ -2,12 +2,14 @@ import { Message as MessageInterface } from '@/lib/types/shared_types';
 import { formatHistory } from '@/lib/utils';
 import { GoogleGenAI } from '@google/genai';
 import { NextResponse } from 'next/server';
+import { saveMessageToDb } from './message';
 
 const MODEL_NAME = 'gemini-2.0-flash';
 
 export async function generateAIResponse(
   prompt: string,
-  history: MessageInterface[]
+  history: MessageInterface[],
+  chatId?: string
 ) {
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -27,6 +29,8 @@ export async function generateAIResponse(
     history: formattedHistory,
   });
 
+  let fullText = '';
+
   const response = await chat.sendMessageStream({
     message: prompt,
   });
@@ -37,13 +41,20 @@ export async function generateAIResponse(
 
       for await (const chunk of response) {
         controller.enqueue(encoder.encode(chunk.text));
+        fullText += chunk.text;
       }
 
       controller.close();
+
+      if (chatId && typeof chatId === 'string') {
+        await saveMessageToDb(chatId, 'model', fullText, MODEL_NAME);
+      }
     },
   });
 
-  return new Response(stream);
+  return new Response(stream, {
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+  });
 }
 
 /*  */

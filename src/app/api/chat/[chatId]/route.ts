@@ -14,7 +14,7 @@ export async function GET(
   try {
     const { chatId } = await params;
 
-    getChatAndHistory(chatId);
+    return await getChatAndHistory(chatId);
   } catch (error) {
     console.error(`Error fetching chat: ${error}`);
     return NextResponse.json(
@@ -36,7 +36,7 @@ export async function PATCH(
     const { chatId } = await params;
     const { title } = await req.json();
 
-    await updateTitle(chatId, title);
+    return await updateTitle(chatId, title);
   } catch (error) {
     console.error(`Error updating chat: ${error}`);
     return NextResponse.json(
@@ -57,7 +57,7 @@ export async function DELETE(
   try {
     const { chatId } = await params;
 
-    await deleteChat(chatId);
+    return await deleteChat(chatId);
   } catch (error) {
     console.error(`Error deleting chat: ${error}`);
     return NextResponse.json(

@@ -7,7 +7,7 @@ import { NextResponse } from 'next/server';
  */
 export async function GET() {
   try {
-    getAllChats();
+    return getAllChats();
   } catch (error) {
     console.error('Error fetching chats:', error);
     return NextResponse.json(
@@ -23,7 +23,7 @@ export async function GET() {
  */
 export async function DELETE() {
   try {
-    deleteAllChats();
+    return deleteAllChats();
   } catch (error) {
     console.error('Error deleting all chats:', error);
     return NextResponse.json(

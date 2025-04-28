@@ -10,102 +10,27 @@ export async function POST(req: NextRequest) {
 
     if (!prompt) {
       return NextResponse.json(
-        { error: 'Message is required' },
+        { error: 'Prompt is required' },
         { status: 400 }
       );
     }
 
-    let chatHistory: MessageInterface[] = [];
-    const isNewChat = !chatId;
+    let newChat;
+    let history: MessageInterface[] = [];
+
+    if (!chatId) {
+      newChat = await createNewChat(generateChatTitle(prompt));
+      if (newChat instanceof NextResponse) return newChat;
+      await saveMessageToDb(newChat._id!, 'user', prompt);
+    }
 
     if (chatId) {
-      const response = await getChatHistory(chatId);
-
-      if (response instanceof NextResponse) {
-        return response;
-      } else {
-        chatHistory = response;
-      }
+      const hist = await getChatHistory(chatId);
+      if (hist instanceof NextResponse) return hist;
+      history = hist;
     }
 
-    const aiResponse: string | NextResponse<{ error: string }> =
-      await generateAIResponse(prompt, chatHistory);
-
-    if (typeof aiResponse !== 'string') {
-      return aiResponse;
-    }
-
-    let responseData = {};
-
-    if (isNewChat) {
-      try {
-        const chatTitle = generateChatTitle(prompt);
-        const newChat = await createNewChat(chatTitle);
-
-        if (newChat instanceof NextResponse) {
-          return newChat;
-        }
-
-        const userMessage = await saveMessageToDb(newChat._id!, 'user', prompt);
-
-        const aiMessage = await saveMessageToDb(
-          newChat._id!,
-          'model',
-          aiResponse
-        );
-
-        responseData = {
-          isNewChat: true,
-          aiResponse,
-          chat: {
-            _id: newChat._id,
-            title: newChat.title,
-            createdAt: newChat.createdAt,
-            updatedAt: newChat.updatedAt,
-          },
-          messages: {
-            user: userMessage.toObject(),
-            ai: aiMessage.toObject(),
-          },
-        };
-      } catch (error) {
-        console.error('Error creating new chat:', error);
-        return NextResponse.json(
-          {
-            isNewChat: true,
-            aiResponse,
-            error: 'Chat created but failed to save messages',
-          },
-          { status: 207 }
-        );
-      }
-    } else {
-      try {
-        const userMessage = await saveMessageToDb(chatId, 'user', prompt);
-        const aiMessage = await saveMessageToDb(chatId, 'model', aiResponse);
-
-        responseData = {
-          isNewChat: false,
-          aiResponse,
-          messages: {
-            user: userMessage.toObject(),
-            ai: aiMessage.toObject(),
-          },
-        };
-      } catch (error) {
-        console.error('Error saving messages:', error);
-        return NextResponse.json(
-          {
-            isNewChat: false,
-            aiResponse,
-            error: 'Failed to save messages',
-          },
-          { status: 207 }
-        );
-      }
-    }
-
-    return NextResponse.json(responseData);
+    return generateAIResponse(prompt, history, chatId || newChat?._id);
   } catch (error) {
     console.error('Unexpected error in chat API:', error);
     return NextResponse.json(

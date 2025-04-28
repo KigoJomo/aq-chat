@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 
 const roboto = Roboto({
   variable: '--font-roboto',
-  subsets: ['latin', 'math', 'symbols'],
+  subsets: ['latin'],
 });
 
 export default function RootLayout({
