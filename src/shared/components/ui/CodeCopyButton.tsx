@@ -20,7 +20,7 @@ export const CodeCopyButton: FC<{ textToCopy: string }> = ({ textToCopy }) => {
         className="text-xs text-foreground/50 hover:text-foreground transition-colors p-1 rounded cursor-pointer"
         aria-label={isCopied ? 'Copied!' : 'Copy code'}>
         {isCopied ? (
-          <Check size={14} className="text-green-500" />
+          <Check size={14} className="" />
         ) : (
           <CopyIcon size={14} />
         )}

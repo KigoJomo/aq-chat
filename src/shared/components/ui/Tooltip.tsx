@@ -17,7 +17,7 @@ interface TooltipProps {
 const Tooltip: React.FC<TooltipProps> = ({
   content,
   position = 'top',
-  delay = 300,
+  delay = 100,
   children,
   className = '',
   size = 'md', // Default size
@@ -67,6 +67,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         clearTimeout(timeout);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -85,7 +86,7 @@ const Tooltip: React.FC<TooltipProps> = ({
             ref={tooltipRef}
             className={`absolute z-50 ${positionClass[position]} ${sizeClasses[size]}
               hidden md:inline-block // Visible only on desktop
-              text-nowrap rounded-md bg-background-light backdrop-blur-3xl 
+              text-nowrap rounded-md bg-background backdrop-blur-3xl 
               text-foreground border border-foreground-light/30 shadow-md ${className}`}
             initial={positionMap[position].initial}
             animate={positionMap[position].animate}

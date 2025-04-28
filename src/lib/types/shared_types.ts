@@ -1,3 +1,5 @@
+export type Role = 'user' | 'model';
+
 export interface Attachment {
   _id?: string;
   type?: 'image' | 'file';
@@ -6,11 +8,11 @@ export interface Attachment {
 
 export interface Message {
   _id?: string;
-  chatId: string;
-  role: 'user' | 'model';
+  chatId?: string;
+  role: Role;
   text: string;
   attachments?: Attachment[];
-  timestamp: Date
+  timestamp?: Date;
   modelName?: string;
 }
 
@@ -20,4 +22,10 @@ export interface Chat {
   title: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface ChatContextType {
+  messages: Message[];
+  responding: boolean;
+  sendMessage: (prompt: string) => Promise<void>;
 }

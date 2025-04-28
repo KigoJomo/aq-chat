@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import React, { FC, HtmlHTMLAttributes, ReactNode } from 'react';
-import { useChat } from '@/store/ChatStore';
+import { useRouter } from 'next/navigation';
 
 interface HeaderProps extends HtmlHTMLAttributes<HTMLDivElement> {
   className?: string;
@@ -10,12 +10,11 @@ interface HeaderProps extends HtmlHTMLAttributes<HTMLDivElement> {
 }
 
 const Header: FC<HeaderProps> = ({ className = '', children }) => {
-  const { title, clearChat } = useChat();
+  const router = useRouter();
 
   const handleNewChatClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    clearChat();
-    window.location.href = '/chat';
+    router.push('/');
   };
 
   return (
@@ -28,14 +27,12 @@ const Header: FC<HeaderProps> = ({ className = '', children }) => {
         `}>
       <div className="hidden md:flex">
         <Link
-          href={'/chat'}
+          href={'/'}
           className="flex items-center gap-2"
           onClick={handleNewChatClick}>
           <h4>aq chat</h4>
         </Link>
       </div>
-
-      <span>{title}</span>
 
       <div className="auth-components flex items-center gap-4">{children}</div>
     </header>

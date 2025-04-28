@@ -5,12 +5,12 @@
   --background: #131313;
   --background-light: #202020;
   --foreground: #ededed;
-  --foreground-light: #d3d3d3;
+  --foreground-light: #c4c4c4;
   --accent: #1267dd;
   --test: #68a7ff;
 
   --font-size: 0.95rem;
-  --font-ratio: 1.25;
+  --font-ratio: 1.35;
 }
 
 [data-theme='light'] {
@@ -18,7 +18,7 @@
   --foreground-light: #202020;
 
   --background: #ededed;
-  --background-light: #d3d3d3;
+  --background-light: #c4c4c4;
 }
 
 @media (max-width: 768px) {
@@ -35,9 +35,7 @@
   --color-foreground-light: var(--foreground-light);
   --color-accent: var(--accent);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-funnel-display: var(--font-funnel-display);
+  --font-roboto: var(--font-roboto);
 }
 
 h1,
@@ -45,14 +43,12 @@ h2,
 h3,
 h4 {
   text-transform: capitalize;
-  font-weight: bold;
 }
 
 h1 {
   font-size: calc(
     var(--font-size) * var(--font-ratio) * var(--font-ratio) * var(--font-ratio)
   );
-  text-transform: uppercase;
 }
 
 h2 {
@@ -63,16 +59,13 @@ h3 {
   font-size: calc(var(--font-size) * var(--font-ratio));
 }
 
-h4, p, li {
+h4,
+p,
+li {
   font-size: calc(var(--font-size));
 }
 
-p, li{
-  color: var(--foreground);
-}
-
 strong {
-  color: var(--foreground);
   font-weight: medium;
 }
 
@@ -108,16 +101,16 @@ html {
   padding: 0;
 
   body {
-    height: 100dvh;
+    height: 100%;
     overflow: hidden;
 
     background: var(--background);
     color: var(--foreground);
-    font-family: var(--font-funnel-display);
+    font-family: var(--font-roboto);
 
     main {
-
       /* header{} */
+
       section {
         width: 100%;
       }
@@ -136,7 +129,7 @@ html {
 
       @media (width >= 64rem /* lg */) {
         section {
-          padding: 1rem 2rem;
+          padding: 1rem 4rem;
         }
       }
     }
@@ -218,7 +211,7 @@ html {
   scrollbar-width: none; /* Firefox */
 }
 
-.no-hor-scrollbar::-webkit-scrollbar{
+.no-hor-scrollbar::-webkit-scrollbar {
   height: 0;
 }
 
