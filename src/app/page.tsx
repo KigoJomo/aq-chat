@@ -1,6 +1,9 @@
-import { redirect } from 'next/navigation';
+import ChatContainer from "./(home)/components/ChatContainer";
 
 export default function Home() {
-  // Redirect to /chat which is the main application entry point
-  redirect('/chat');
+  return (
+    <>
+      <ChatContainer />
+    </>
+  )
 }

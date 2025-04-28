@@ -13,19 +13,16 @@
     "@google/genai": "^0.10.0",
     "@vercel/analytics": "^1.5.0",
     "framer-motion": "^12.7.2",
-    "install": "^0.13.0",
     "lucide-react": "^0.487.0",
     "mongoose": "^8.13.2",
     "motion": "^12.6.3",
     "next": "15.2.4",
-    "next-themes": "^0.4.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",
     "react-syntax-highlighter": "^15.6.1",
     "remark-gfm": "^4.0.1",
-    "server-only": "^0.0.1",
-    "zustand": "^5.0.3"
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
