@@ -29,5 +29,7 @@ export const MessageSchema: Schema<IMessage> = new Schema({
   modelName: { type: String },
 });
 
+MessageSchema.index({ chatId: 1, timestamp: 1 });
+
 export default mongoose.models.Message ||
   mongoose.model<IMessage>('Message', MessageSchema);
