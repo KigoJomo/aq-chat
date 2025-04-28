@@ -1,13 +1,17 @@
 import { Message as MessageInterface } from '@/lib/types/shared_types';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { formatHistory } from '@/lib/utils';
+import { GoogleGenAI } from '@google/genai';
 import { NextResponse } from 'next/server';
 
 const MODEL_NAME = 'gemini-2.0-flash';
 
-export async function generateAIResponse(prompt: string, history: MessageInterface[]) {
-  const apiKey = process.env.GEMINI_API_KEY;
+export async function generateAIResponse(
+  prompt: string,
+  history: MessageInterface[]
+) {
+  const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-  if (!apiKey) {
+  if (!GEMINI_API_KEY) {
     console.error('GEMINI_API_KEY is not set');
     return NextResponse.json(
       { error: 'API key not configured' },
@@ -15,26 +19,34 @@ export async function generateAIResponse(prompt: string, history: MessageInterfa
     );
   }
 
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: MODEL_NAME });
+  const formattedHistory = formatHistory(history);
 
-  const formattedHistory = history.map(
-    (msg: { role: string; text: string }) => ({
-      role: msg.role === 'model' ? 'model' : 'user',
-      parts: [{ text: msg.text }],
-    })
-  );
-
-  const aiChat = model.startChat({
+  const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+  const chat = ai.chats.create({
+    model: MODEL_NAME,
     history: formattedHistory,
   });
 
-  const result = await aiChat.sendMessage(prompt);
-  const response = await result.response;
-  const text = response.text();
+  const response = await chat.sendMessageStream({
+    message: prompt,
+  });
 
-  return text;
+  const stream = new ReadableStream({
+    async start(controller) {
+      const encoder = new TextEncoder();
+
+      for await (const chunk of response) {
+        controller.enqueue(encoder.encode(chunk.text));
+      }
+
+      controller.close();
+    },
+  });
+
+  return new Response(stream);
 }
+
+/*  */
 
 /**
  * Generates a chat title based on the user's prompt
@@ -44,17 +56,17 @@ export async function generateAIResponse(prompt: string, history: MessageInterfa
 export function generateChatTitle(prompt: string): string {
   const maxTitleLength = 30;
   let title = prompt.trim().substring(0, maxTitleLength);
-  
+
   if (title.length === maxTitleLength && prompt.length > maxTitleLength) {
     const lastSpaceIndex = title.lastIndexOf(' ');
     if (lastSpaceIndex > 0) {
       title = title.substring(0, lastSpaceIndex);
     }
   }
-  
+
   if (prompt.length > title.length) {
     title += '...';
   }
-  
+
   return title || 'New Chat';
 }
