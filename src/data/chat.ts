@@ -149,3 +149,48 @@ export async function getChatAndHistory(chatId: string) {
     chatHistory: messages,
   });
 }
+
+export async function getAllChats() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json(
+      { error: 'Authentication required' },
+      { status: 401 }
+    );
+  }
+
+  await dbConnect();
+
+  const chats = await Chat.find({ userId }).sort({ updatedAt: -1 }).lean();
+
+  return NextResponse.json(
+    chats.map((chat) => ({
+      _id: chat._id as string,
+      title: chat.title,
+      updatedAt: chat.updatedAt,
+    }))
+  );
+}
+
+export async function deleteAllChats() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json(
+      { error: 'Authentication required' },
+      { status: 401 }
+    );
+  }
+
+  await dbConnect();
+
+  const chats = await Chat.find({ userId }).select('_id');
+  const chatIds = chats.map((chat) => chat._id);
+
+  await Message.deleteMany({ chatId: { $in: chatIds } });
+
+  await Chat.deleteMany({ userId });
+
+  return NextResponse.json({ success: true });
+}
