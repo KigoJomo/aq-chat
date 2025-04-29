@@ -4,7 +4,7 @@ import { FC } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { CodeCopyButton } from './CodeCopyButton';
 
 interface MarkdownRendererProps {
@@ -30,29 +30,30 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({
             inline?: boolean;
             className?: string;
             children?: React.ReactNode;
-            // [key: string]: any;
           }) => {
             const match = /language-(\w+)/.exec(className || '');
             const codeString = String(children).replace(/\n$/, '');
+            const isInlineCode =
+              inline || (className === undefined && !codeString.includes('\n'));
 
-            return !inline && match ? (
+            return !isInlineCode ? (
               <div className="code-block-wrapper rounded-md my-0 overflow-hidden">
                 <div className="flex justify-between items-center px-4 py-1 bg-foreground-light/20 text-xs text-foreground/60">
-                  <span>{match[1]}</span>
+                  <span>{match ? match[1] : 'txt'}</span>
                   <CodeCopyButton textToCopy={codeString} />
                 </div>
 
                 <SyntaxHighlighter
-                  style={vscDarkPlus}
-                  language={match[1]}
+                  style={tomorrow}
+                  language={match ? match[1] : 'text'}
                   PreTag={'div'}
                   {...rest}>
-                  {String(children).replace(/\n$/, '')}
+                  {codeString}
                 </SyntaxHighlighter>
               </div>
             ) : (
               <span
-                className={`font-mono text-sm bg-foreground-light/30 px-1 rounded ${className}`}
+                className={`font-mono text-sm bg-foreground-light/30 px-1.5 py-0.5 rounded whitespace-nowrap ${className}`}
                 {...rest}>
                 {String(children).replace(/`/g, '')}
               </span>

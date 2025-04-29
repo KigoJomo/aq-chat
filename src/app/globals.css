@@ -341,7 +341,7 @@ html {
 
 /* ----------------------------------- */
 
-.prose :where(pre):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
-  /* padding: 0 0; */
+pre{
+  padding: 0 0;
   background-color: transparent;
 }
