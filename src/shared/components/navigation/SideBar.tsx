@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  EllipsisVertical,
   MessageCirclePlus,
   PanelRightClose,
   PanelRightOpen,
@@ -11,16 +12,27 @@ import { cn } from '@/lib/utils';
 import Tooltip from '@/shared/components/ui/Tooltip';
 import { useDeviceType } from '../../../hooks/useDeviceType';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
+import { useChatContext } from '@/context/ChatContext';
 
 const SideBar: FC = () => {
-  const deviceType = useDeviceType();
+  const { isSignedIn } = useUser();
 
+  const { chatId, clearChat, chats, refreshChatList } = useChatContext();
+
+  useEffect(() => {
+    if (isSignedIn) {
+      refreshChatList();
+    }
+  }, [isSignedIn, refreshChatList]);
+
+  const router = useRouter();
+
+  const deviceType = useDeviceType();
   const [panelOpen, setPanelOpen] = useState(
     deviceType === 'mobileOrTablet' ? false : true
   );
   const [isMounted, setIsMounted] = useState(false);
-
-  const router = useRouter();
 
   useEffect(() => {
     const savedState = localStorage.getItem('sidebar-open');
@@ -38,6 +50,8 @@ const SideBar: FC = () => {
 
   const handleNewChatClick = () => {
     setPanelOpen(deviceType === 'mobileOrTablet' ? false : panelOpen);
+    console.log("SideBar: 'New Chat' clicked, clearing chat state.");
+    clearChat();
     router.push('/');
   };
 
@@ -94,13 +108,44 @@ const SideBar: FC = () => {
           )}
         </Link>
 
-        <p
-          className={`
+        {panelOpen &&
+          (isSignedIn ? (
+            <div className={cn('w-full flex flex-col gap-2', '')}>
+              {chats.map((chat) => (
+                <div
+                  key={chat._id}
+                  className={cn(
+                    'py-2 px-4 w-full flex items-center gap-0',
+                    'group rounded-xl transition-all duration-300',
+                    chat._id === chatId
+                      ? 'bg-background'
+                      : 'bg-transparent hover:bg-background/80'
+                  )}>
+                  <Link
+                    href={`/chat/${chat._id}`}
+                    className={cn('text-nowrap truncate text-sm w-full')}>
+                    {chat.title}
+                  </Link>
+
+                  <button
+                    className={cn(
+                      'opacity-0 group-hover:opacity-100 transition-all duration-300',
+                      'aspect-square px-1 shrink-0 flex items-center justify-center'
+                    )}>
+                    <EllipsisVertical size={12} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p
+              className={`
           !text-xs !text-foreground-light italic mx-auto my-12 whitespace-nowrap
           ${panelOpen ? 'flex' : 'hidden'}
         `}>
-          Log in to save your chats
-        </p>
+              Log in to save your chats
+            </p>
+          ))}
       </aside>
 
       <div

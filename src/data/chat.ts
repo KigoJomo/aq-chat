@@ -26,12 +26,15 @@ export async function createNewChat(
 
   await dbConnect();
 
+  console.log(`>>>> Creating new chat: `);
   const newChat = new Chat({
     userId,
     title: title,
   });
+  const newSavedChat = await newChat.save();
 
-  return await newChat.save();
+  console.log(`>>>>> created new chat: ${newSavedChat.title}`);
+  return newSavedChat;
 }
 
 export async function getChatHistory(chatId: string) {
@@ -53,6 +56,7 @@ export async function getChatHistory(chatId: string) {
       return NextResponse.json({ error: 'Chat not found' }, { status: 404 });
     }
 
+    console.log(`>>>>> Getting messages for ${chatId}`)
     const messages: MessageInterface[] = await Message.find({ chatId });
 
     return messages;

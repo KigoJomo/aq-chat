@@ -7,7 +7,7 @@ import {
   SignedOut,
   UserButton,
 } from '@clerk/nextjs';
-import { Roboto } from 'next/font/google';
+import { Roboto, Lexend } from 'next/font/google';
 import './globals.css';
 import { Analytics } from '@vercel/analytics/next';
 import Button from '@/shared/components/ui/Button';
@@ -26,6 +26,11 @@ const roboto = Roboto({
   subsets: ['latin'],
 });
 
+const lexend = Lexend({
+  variable: '--font-lex',
+  subsets: ['latin'],
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -34,10 +39,11 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${roboto.variable} antialiased overflow-hidden flex`}>
+        <body
+          className={`${roboto.variable} ${lexend.variable} antialiased overflow-hidden flex`}>
           <ChatProvider>
             <SideBar />
-            <main className="w-full max-h-dvh flex flex-col overflow-y-scroll custom-scrollbar">
+            <main className="w-full max-h-dvh flex flex-col overflow-y-scroll overflow-x-hidden custom-scrollbar">
               <Header>
                 <SignedOut>
                   <SignInButton>

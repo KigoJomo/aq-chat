@@ -1,4 +1,4 @@
-import { Message as MessageInterface, Role } from './types/shared_types';
+import { AiModel, Message as MessageInterface, modelDisplayNames, Role } from './types/shared_types';
 
 export function cn(...inputs: Array<string | boolean | undefined | null>) {
   return inputs.filter(Boolean).join(' ');
@@ -13,4 +13,8 @@ export function formatHistory(chatHistory: MessageInterface[]) {
     role: msg.role === 'model' ? 'model' : 'user',
     parts: [{ text: msg.text }],
   }));
+}
+
+export function getDisplayName(model: AiModel): string {
+  return modelDisplayNames[model];
 }

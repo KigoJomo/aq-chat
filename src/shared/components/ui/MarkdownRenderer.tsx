@@ -4,7 +4,7 @@ import { FC } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { CodeCopyButton } from './CodeCopyButton';
 
 interface MarkdownRendererProps {
@@ -38,13 +38,13 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({
 
             return !isInlineCode ? (
               <div className="code-block-wrapper rounded-md my-0 overflow-hidden">
-                <div className="flex justify-between items-center px-4 py-1 bg-foreground-light/20 text-xs text-foreground/60">
+                <div className="flex justify-between items-center px-4 py-1 bg-background-light text-xs text-foreground/60">
                   <span>{match ? match[1] : 'txt'}</span>
                   <CodeCopyButton textToCopy={codeString} />
                 </div>
 
                 <SyntaxHighlighter
-                  style={tomorrow}
+                  style={oneDark}
                   language={match ? match[1] : 'text'}
                   PreTag={'div'}
                   {...rest}>

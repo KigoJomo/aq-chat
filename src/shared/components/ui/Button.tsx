@@ -23,7 +23,7 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   // Define base styles
   const baseStyles =
-    'flex items-center justify-center font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 cursor-pointer';
+    'flex items-center justify-center font-medium rounded-3xl transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 cursor-pointer';
 
   // Define variant styles
   const variantStyles = {

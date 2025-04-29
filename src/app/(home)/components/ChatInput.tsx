@@ -2,6 +2,7 @@
 
 import { useChatContext } from '@/context/ChatContext';
 import { useDeviceType } from '@/hooks/useDeviceType';
+import { getDisplayName } from '@/lib/utils';
 import Tooltip from '@/shared/components/ui/Tooltip';
 import { ArrowUp, Plus, Squircle } from 'lucide-react';
 import {
@@ -15,7 +16,7 @@ import {
 
 export default function ChatInput() {
   const [prompt, setPrompt] = useState<string>('');
-  const { sendMessage, responding } = useChatContext();
+  const { sendMessage, responding, selectedModel } = useChatContext();
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const deviceType = useDeviceType();
@@ -53,7 +54,7 @@ export default function ChatInput() {
   return (
     <div
       className={`
-        w-full md:w-[42rem] flex flex-col gap-4 px-4 pb-2 pt-3 mt-auto
+        w-full md:max-w-[42rem] flex flex-col gap-4 px-4 pb-2 pt-3 mt-auto
         sticky bottom-4
         bg-background-light border border-foreground-light/10 focus-within:border-foreground-light/50 rounded-3xl
         transition-all duration-300
@@ -67,9 +68,9 @@ export default function ChatInput() {
         onKeyDown={handleKeyDown}
         placeholder="Ask anything"
         className={`
-          w-full overflow-y-auto
+          w-full overflow-y-auto custom-scrollbar
           resize-none outline-none focus:outline-none bg-transparent
-          text-sm px-2
+          text-sm px-2 font-light
         `}
         rows={1}
       />
@@ -96,7 +97,7 @@ export default function ChatInput() {
               text-xs
               cursor-pointer
             `}>
-            Gemini 2.0 Flash
+            {getDisplayName(selectedModel)}
           </button>
         </Tooltip>
 

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import React, { FC, HtmlHTMLAttributes, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import { useChatContext } from '@/context/ChatContext';
 
 interface HeaderProps extends HtmlHTMLAttributes<HTMLDivElement> {
   className?: string;
@@ -12,8 +13,11 @@ interface HeaderProps extends HtmlHTMLAttributes<HTMLDivElement> {
 const Header: FC<HeaderProps> = ({ className = '', children }) => {
   const router = useRouter();
 
+  const { chatTitle, clearChat } = useChatContext();
+
   const handleNewChatClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
+    clearChat();
     router.push('/');
   };
 
@@ -33,6 +37,8 @@ const Header: FC<HeaderProps> = ({ className = '', children }) => {
           <h4>aq chat</h4>
         </Link>
       </div>
+
+      {chatTitle && <span className="text-sm">{chatTitle}</span>}
 
       <div className="auth-components flex items-center gap-4">{children}</div>
     </header>

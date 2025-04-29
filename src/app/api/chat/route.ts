@@ -1,3 +1,22 @@
+/**
+ * Handles POST requests for chat functionality.
+ * Creates a new chat or continues an existing one based on provided chatId.
+ *
+ * @param req - The Next.js request object containing prompt and optional chatId
+ * @returns {Promise<NextResponse>} JSON response containing AI generated response or error message
+ *
+ * @throws {NextResponse} 400 - If prompt is missing
+ * @throws {NextResponse} 500 - If unexpected error occurs during processing
+ *
+ * Request body:
+ * - prompt: string (required) - The user's input message
+ * - chatId: string (optional) - ID of existing chat to continue conversation
+ *
+ * Flow:
+ * 1. Creates new chat if no chatId provided
+ * 2. Retrieves chat history if chatId exists
+ * 3. Generates and returns AI response
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import { Message as MessageInterface } from '@/lib/types/shared_types';
 import { createNewChat, getChatHistory } from '@/data/chat';
@@ -15,13 +34,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let newChat;
+    let title: string | undefined;
+    let currentChatId = chatId
     let history: MessageInterface[] = [];
 
     if (!chatId) {
-      newChat = await createNewChat(generateChatTitle(prompt));
-      if (newChat instanceof NextResponse) return newChat;
-      await saveMessageToDb(newChat._id!, 'user', prompt);
+      const newChat = await createNewChat(generateChatTitle(prompt));
+      if (newChat instanceof NextResponse) {
+        return newChat;
+      }
+      currentChatId = newChat._id
+      title = newChat.title;
     }
 
     if (chatId) {
@@ -30,7 +53,18 @@ export async function POST(req: NextRequest) {
       history = hist;
     }
 
-    return generateAIResponse(prompt, history, chatId || newChat?._id);
+    const savedMessage = await saveMessageToDb(currentChatId!, 'user', prompt);
+    if (savedMessage instanceof NextResponse) {
+      return savedMessage; // Return error response if save failed
+    }
+    console.log(savedMessage._id)
+
+    return generateAIResponse(
+      prompt,
+      history,
+      currentChatId,
+      title
+    );
   } catch (error) {
     console.error('Unexpected error in chat API:', error);
     return NextResponse.json(

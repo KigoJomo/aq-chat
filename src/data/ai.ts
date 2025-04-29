@@ -5,11 +5,13 @@ import { NextResponse } from 'next/server';
 import { saveMessageToDb } from './message';
 
 const MODEL_NAME = 'gemini-2.0-flash';
+// const MODEL_NAME = 'gemini-2.0-flash-lite';
 
 export async function generateAIResponse(
   prompt: string,
   history: MessageInterface[],
-  chatId?: string
+  chatId?: string,
+  title?: string
 ) {
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -53,7 +55,11 @@ export async function generateAIResponse(
   });
 
   return new Response(stream, {
-    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      ...(chatId && { 'X-Chat-Id': chatId }),
+      ...(title && { 'X-Chat-Title': title }),
+    },
   });
 }
 

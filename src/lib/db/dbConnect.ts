@@ -33,18 +33,19 @@ if (!cached) {
 
 async function dbConnect() {
   if (cached.conn) {
-    console.log('Using existing connection.')
+    console.log('Using existing connection.');
     return cached.conn;
   }
 
   if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
-      return mongoose;
-    });
+    cached.promise = mongoose
+      .connect(MONGODB_URI!, {
+        bufferCommands: false,
+        dbName: 'aq_chat',
+      })
+      .then((mongoose) => {
+        return mongoose;
+      });
   }
 
   try {

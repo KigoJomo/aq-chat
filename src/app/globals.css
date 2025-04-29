@@ -36,6 +36,7 @@
   --color-accent: var(--accent);
 
   --font-roboto: var(--font-roboto);
+  --font-lex: var(--font-lex);
 }
 
 h1,
@@ -65,8 +66,18 @@ li {
   font-size: calc(var(--font-size));
 }
 
+p,
+li,
+a {
+  font-weight: 300;
+}
+
+button {
+  cursor: pointer;
+}
+
 strong {
-  font-weight: 700;
+  font-weight: 400;
 }
 
 input[type='checkbox']:not(:checked) {
@@ -80,7 +91,7 @@ img {
 
 hr {
   border-color: color-mix(in oklab, var(--foreground-light) 25%, transparent);
-  margin: 0 !important;
+  /* margin: 0 !important; */
 }
 
 * {
@@ -106,13 +117,14 @@ html {
 
     background: var(--background);
     color: var(--foreground);
-    font-family: var(--font-roboto);
+    font-family: var(--font-lex);
 
     main {
       /* header{} */
 
       section {
         width: 100%;
+        padding: 0rem 2rem;
       }
 
       @media (width < 40rem) {
@@ -136,52 +148,6 @@ html {
   }
 }
 
-.bg-gradient-background {
-  background: linear-gradient(
-    to top,
-    var(--background-light),
-    var(--background)
-  );
-}
-
-.bg-gradient-foreground {
-  background: linear-gradient(
-    to top,
-    var(--foreground-light),
-    var(--foreground)
-  );
-}
-
-.text-gradient-background {
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(
-    to top,
-    var(--background-light),
-    var(--background)
-  );
-}
-
-.text-gradient-foreground {
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(
-    to top,
-    var(--foreground-light),
-    var(--foreground)
-  );
-}
-
-.text-solid-foreground {
-  background-clip: initial;
-  -webkit-background-clip: initial;
-  -webkit-text-fill-color: initial;
-  background-image: none;
-  color: var(--foreground);
-}
-
 @media (width < 40rem) {
   .custom-scrollbar::-webkit-scrollbar {
     display: none;
@@ -189,12 +155,11 @@ html {
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
+  width: 0.35rem;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: var(--background-light);
-  border-radius: 12px;
+  background: transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
@@ -209,10 +174,6 @@ html {
 .hide-scrollbar {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
-}
-
-.no-hor-scrollbar::-webkit-scrollbar {
-  height: 0;
 }
 
 /* Animation classes */
@@ -340,8 +301,43 @@ html {
 }
 
 /* ----------------------------------- */
+body
+  > main
+  > section
+  > div.w-full.md\:max-w-\[48rem\].flex.flex-col.gap-8.pb-24.transition-all.duration-300
+  > div:nth-child(7)
+  > div
+  > div.max-w-full.prose.dark\:prose-invert
+  > pre {
+  padding: 0rem 1rem;
+}
 
-pre{
+pre {
   padding: 0 0;
   background-color: transparent;
+
+  div {
+    div:has(> code) {
+      background: #0c0c0c !important;
+      margin: 0 !important;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    div {
+      code {
+        background: transparent !important;
+        span {
+          background: transparent !important;
+          background-color: transparent !important;
+        }
+      }
+    }
+  }
 }
+
+/* ul {
+  list-style-position: inside;
+  padding-left: 0;
+} */
