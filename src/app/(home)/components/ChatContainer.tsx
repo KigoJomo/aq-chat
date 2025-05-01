@@ -4,55 +4,10 @@ import { useChatContext } from '@/context/ChatContext';
 import { useClipBoard } from '@/hooks/useClipboard';
 import MarkdownRenderer from '@/shared/components/ui/MarkdownRenderer';
 import { Check, CopyIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
 
 export default function ChatContainer() {
   const { copiedMessageIndex, copyToClipboard } = useClipBoard();
-  const { chatId, messages, updateMessages, updateChatTitle } =
-    useChatContext();
-
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const loadChat = async () => {
-      if (chatId) {
-        console.log(
-          `ChatContainer Effect: Fetching chat data for chatId: ${chatId}`
-        );
-        try {
-          setLoading(true);
-          const res = await fetch(`/api/chat/${chatId}`);
-          if (res.ok) {
-            const data = await res.json();
-            console.log(
-              `ChatContainer Effect: Received data for ${chatId}`,
-              data
-            );
-            updateMessages(data.chatHistory || []);
-            updateChatTitle(data.chat?.title || 'Chat');
-          } else {
-            console.error(
-              `ChatContainer Effect: Failed to fetch chat ${chatId}:`,
-              res.status,
-              await res.text()
-            );
-          }
-        } catch (error) {
-          console.error(
-            `ChatContainer Effect: Error loading chat ${chatId}:`,
-            error
-          );
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        console.log('ChatContainer Effect: chatId is null, skipping fetch.');
-      }
-    };
-
-    loadChat();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chatId]);
+  const { messages, loadingMessages: loading } = useChatContext();
 
   return (
     <div
@@ -61,12 +16,11 @@ export default function ChatContainer() {
         flex flex-col gap-8
         transition-all duration-300
       ">
-      {loading && (
+      {loading ? (
         <>
           <div className="w-48 aspect-square rounded-full shrink-0 bg-background-light animate-pulse mx-auto mt-24"></div>
         </>
-      )}
-      {messages && messages.length > 0 ? (
+      ) : messages.length > 0 ? (
         <>
           {messages.map((message, index) => (
             <div

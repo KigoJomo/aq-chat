@@ -39,19 +39,3 @@ export interface Chat {
   createdAt?: Date;
   updatedAt?: Date;
 }
-
-export interface ChatContextType {
-  messages: Message[];
-  updateMessages: (messages: Message[]) => void;
-  responding: boolean;
-  chatId: string | null;
-  updateChatId: (newId: string) => void;
-  chatTitle: string | null;
-  updateChatTitle: (newTitle: string) => void;
-  sendMessage: (prompt: string) => Promise<void>;
-  clearChat: () => void;
-  chats: Chat[];
-  refreshChatList: () => Promise<void>;
-  selectedModel: AiModel;
-  updateSelectedModel: (model: AiModel) => void;
-}
