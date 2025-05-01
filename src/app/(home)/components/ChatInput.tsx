@@ -5,6 +5,7 @@ import { useDeviceType } from '@/hooks/useDeviceType';
 import { getDisplayName } from '@/lib/utils';
 import Tooltip from '@/shared/components/ui/Tooltip';
 import { ArrowUp, Plus, Squircle } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import {
   ChangeEvent,
   KeyboardEvent,
@@ -15,6 +16,8 @@ import {
 } from 'react';
 
 export default function ChatInput() {
+  const pathname = usePathname()
+
   const [prompt, setPrompt] = useState<string>('');
   const { sendMessage, responding, selectedModel } = useChatContext();
 
@@ -54,8 +57,8 @@ export default function ChatInput() {
   return (
     <div
       className={`
-        w-full md:max-w-[42rem] flex flex-col gap-4 px-4 pb-2 pt-3 mt-auto
-        sticky bottom-4
+        w-full md:max-w-[42rem] flex flex-col gap-4 px-4 pb-2 pt-3
+        ${pathname === '/' ? '' : 'sticky bottom-4'}
         bg-background-light border border-foreground-light/10 focus-within:border-foreground-light/50 rounded-3xl
         transition-all duration-300
       `}>

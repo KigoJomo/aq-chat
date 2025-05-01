@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import {
   ClerkProvider,
   SignInButton,
@@ -21,6 +21,10 @@ export const metadata: Metadata = {
   description: 'Your chatty AI buddy.',
 };
 
+export const viewport: Viewport = {
+  interactiveWidget: 'resizes-content'
+}
+
 const roboto = Roboto({
   variable: '--font-roboto',
   subsets: ['latin'],
@@ -40,7 +44,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`${roboto.variable} ${lexend.variable} antialiased overflow-hidden flex`}>
+          className={`${roboto.variable} ${lexend.variable} antialiased overflow-x-hidden flex`}>
           <ChatProvider>
             <SideBar />
             <main className="w-full max-h-dvh flex flex-col overflow-y-scroll overflow-x-hidden custom-scrollbar">
@@ -63,7 +67,7 @@ export default function RootLayout({
                   <UserButton />
                 </SignedIn>
               </Header>
-              <section className="flex-1 flex flex-col items-center gap-4">
+              <section className="h-full flex flex-col items-center gap-4">
                 {children}
                 <ChatInput />
               </section>

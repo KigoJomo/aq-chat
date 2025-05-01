@@ -22,7 +22,7 @@ const Header: FC<HeaderProps> = ({ className = '', children }) => {
       className={`
         ${className}
         p-4 pl-14 md:pl-4 backdrop-blur-3xl
-        flex items-center justify-between gap-6
+        w-full flex items-center justify-between gap-6
         sticky top-0 z-50
         `}>
       <div className="hidden md:flex">
@@ -36,7 +36,7 @@ const Header: FC<HeaderProps> = ({ className = '', children }) => {
 
       {chatTitle && <span className="text-sm">{chatTitle}</span>}
 
-      <div className="auth-components flex items-center gap-4">{children}</div>
+      <div className="auth-components ml-auto md:m-0 flex items-center gap-4">{children}</div>
     </header>
   );
 };

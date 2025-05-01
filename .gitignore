@@ -41,5 +41,6 @@ yarn-error.log*
 next-env.d.ts
 rough.txt
 rough.md
+rough.html
 TODO.md
 /.vscode

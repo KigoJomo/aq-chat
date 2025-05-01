@@ -108,12 +108,12 @@ hr {
 html {
   width: 100vw;
   height: 100dvh;
-  overflow: hidden;
+  transition: height .3s ease-in-out;
   padding: 0;
 
   body {
-    height: 100%;
-    overflow: hidden;
+    height: 100dvh;
+    transition: height .3s ease-in-out;
 
     background: var(--background);
     color: var(--foreground);
