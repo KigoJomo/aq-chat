@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import React, { FC, HtmlHTMLAttributes, ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
 import { useChatContext } from '@/context/ChatContext';
 
 interface HeaderProps extends HtmlHTMLAttributes<HTMLDivElement> {
@@ -11,14 +10,11 @@ interface HeaderProps extends HtmlHTMLAttributes<HTMLDivElement> {
 }
 
 const Header: FC<HeaderProps> = ({ className = '', children }) => {
-  const router = useRouter();
-
-  const { chatTitle, clearChat } = useChatContext();
+  const { chatTitle, newChat } = useChatContext();
 
   const handleNewChatClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    clearChat();
-    router.push('/');
+    newChat();
   };
 
   return (

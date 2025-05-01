@@ -6,27 +6,25 @@ import {
   PanelRightClose,
   PanelRightOpen,
 } from 'lucide-react';
-import { FC, useEffect, useState } from 'react';
+import { FC, MouseEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import Tooltip from '@/shared/components/ui/Tooltip';
 import { useDeviceType } from '../../../hooks/useDeviceType';
-import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import { useChatContext } from '@/context/ChatContext';
 
 const SideBar: FC = () => {
   const { isSignedIn } = useUser();
 
-  const { chatId, clearChat, chats, refreshChatList } = useChatContext();
+  const { chatId, newChat, chats, refreshChatList, openChat } =
+    useChatContext();
 
   useEffect(() => {
     if (isSignedIn) {
       refreshChatList();
     }
   }, [isSignedIn, refreshChatList]);
-
-  const router = useRouter();
 
   const deviceType = useDeviceType();
   const [panelOpen, setPanelOpen] = useState(
@@ -48,11 +46,10 @@ const SideBar: FC = () => {
 
   const togglePanel = () => setPanelOpen(!panelOpen);
 
-  const handleNewChatClick = () => {
+  const handleNewChatClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
     setPanelOpen(deviceType === 'mobileOrTablet' ? false : panelOpen);
-    console.log("SideBar: 'New Chat' clicked, clearing chat state.");
-    clearChat();
-    router.push('/');
+    newChat();
   };
 
   return (
@@ -91,10 +88,7 @@ const SideBar: FC = () => {
 
         <Link
           href="/"
-          onClick={(e) => {
-            e.preventDefault();
-            handleNewChatClick();
-          }}
+          onClick={handleNewChatClick}
           className={cn(
             'w-full flex items-center gap-2 p-2 rounded-xl',
             'transition-all duration-200 hover:bg-accent/15',
@@ -123,6 +117,13 @@ const SideBar: FC = () => {
                   )}>
                   <Link
                     href={`/chat/${chat._id}`}
+                    onClick={(e: MouseEvent<HTMLAnchorElement>) => {
+                      e.preventDefault();
+                      setPanelOpen(
+                        deviceType === 'mobileOrTablet' ? false : panelOpen
+                      );
+                      openChat(chat._id!, chat.title);
+                    }}
                     className={cn('text-nowrap truncate text-sm w-full')}>
                     {chat.title}
                   </Link>

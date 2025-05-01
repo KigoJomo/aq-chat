@@ -1,44 +1,100 @@
 // src/context/ChatContext.tsx
 'use client';
 
-import { AiModel, Chat, ChatContextType, Message } from '@/lib/types/shared_types';
+import { AiModel, Chat, Message } from '@/lib/types/shared_types';
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import React, { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+
+interface ChatContextType {
+  activePage: string | undefined;
+  updateActivePage: (page: string) => void;
+
+  sendMessage: (prompt: string) => Promise<void>;
+  responding: boolean;
+
+  selectedModel: AiModel;
+  updateSelectedModel: (model: AiModel) => void;
+
+  messages: Message[];
+  updateMessages: (messages: Message[]) => void;
+  loadingMessages: boolean;
+
+  chatId: string | null;
+  updateChatId: (newId: string) => void;
+
+  chatTitle: string | null;
+  updateChatTitle: (newTitle: string) => void;
+
+  chats: Chat[];
+  refreshChatList: () => Promise<void>;
+
+  openChat: (chatId: string, chatTitle?: string) => Promise<void>;
+
+  newChat: () => void;
+}
+
+const DEFAULT_MODEL = AiModel.GEMINI_2_0_FLASH_LITE;
 
 export const ChatContext = createContext<ChatContextType>({
-  messages: [],
+  activePage: undefined,
+  updateActivePage: () => {},
+
+  sendMessage: async () => {},
   responding: false,
+
+  selectedModel: DEFAULT_MODEL,
+  updateSelectedModel: () => {},
+
+  messages: [],
+  updateMessages: () => {},
+  loadingMessages: false,
+
   chatId: null,
   updateChatId: () => {},
-  sendMessage: async () => {},
+
   chatTitle: null,
   updateChatTitle: () => {},
-  clearChat: () => {},
-  updateMessages: () => { },
+
   chats: [],
-  refreshChatList: async () => { },
-  selectedModel: AiModel.GEMINI_2_0_FLASH_LITE,
-  updateSelectedModel: () => { }
+  refreshChatList: async () => {},
+
+  openChat: async () => {},
+
+  newChat: () => {},
 });
 
 export function ChatProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { isSignedIn } = useUser();
 
+  const [activePage, setActivePage] = useState<string | undefined>(undefined);
+
   const [chats, setChats] = useState<Chat[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [loadingMessages, setLoadingMessages] = useState(false);
   const [responding, setResponding] = useState<boolean>(false);
   const [chatId, setChatId] = useState<string | null>(null);
   const [chatTitle, setChatTitle] = useState<string | null>(null);
 
-  const [selectedModel, setSelectedModel] = useState<AiModel>(AiModel.GEMINI_2_0_FLASH_LITE)
+  const [selectedModel, setSelectedModel] = useState<AiModel>(DEFAULT_MODEL);
   const updateSelectedModel = (model: AiModel) => {
-    setSelectedModel(model)
-  }
+    setSelectedModel(model);
+  };
 
   const API_URL =
     !isSignedIn || isSignedIn === undefined ? '/api/chat/temp' : '/api/chat';
+
+  const updateActivePage = (page: string) => {
+    setActivePage(page);
+  };
 
   const updateChatId = (newId: string) => {
     setChatId(newId);
@@ -115,7 +171,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
       if (newChatId) {
         updateChatId(newChatId);
-        if (isSignedIn) { 
+        if (isSignedIn) {
           router.push(`/chat/${newChatId}`);
           await refreshChatList();
         }
@@ -165,30 +221,62 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const clearChat = () => {
-    if (chatTitle !== null) setChatTitle(null);
-    console.log('>>> cleared title', chatTitle)
+  const openChat = async (chatId: string, chatTitle?: string) => {
+    setChatId(chatId);
+    setMessages([]);
+    if(chatTitle) setChatTitle(chatTitle)
+
+    try {
+      setLoadingMessages(true);
+      const res = await fetch(`/api/chat/${chatId}`);
+      if (res.ok) {
+        const data = await res.json();
+
+        setChatTitle(data.chat.title);
+        setMessages(data.chatHistory);
+        router.push(`/chat/${chatId}`);
+      } else {
+        console.error(
+          `Failed to fetch chat ${chatId}: `,
+          res.status,
+          await res.text()
+        );
+      }
+    } catch (error) {
+      console.error(`Error loading chat ${chatId}: `, error);
+    } finally {
+      setLoadingMessages(false);
+    }
+  };
+
+  const newChat = () => {
+    setChatId(null);
+    setChatTitle(null);
     setMessages([]);
     setResponding(false);
-    if(chatId !== null) setChatId(null)
+    router.push('/')
   };
 
   return (
     <ChatContext.Provider
       value={{
-        messages,
+        activePage,
+        updateActivePage,
+        sendMessage,
         responding,
+        selectedModel,
+        updateSelectedModel,
+        messages,
+        updateMessages,
+        loadingMessages,
         chatId,
         updateChatId,
-        sendMessage,
         chatTitle,
         updateChatTitle,
-        clearChat,
-        updateMessages,
         chats,
         refreshChatList,
-        selectedModel,
-        updateSelectedModel
+        openChat,
+        newChat,
       }}>
       {children}
     </ChatContext.Provider>
