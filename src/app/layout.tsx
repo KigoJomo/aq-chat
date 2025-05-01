@@ -17,13 +17,24 @@ import ChatInput from './(home)/components/ChatInput';
 import { ChatProvider } from '@/context/ChatContext';
 
 export const metadata: Metadata = {
-  title: 'Aq Chat',
-  description: 'Your chatty AI buddy.',
+  title: 'Aqutte.ai',
+  description:
+    'Get instant responses, help with tasks, and enjoy meaningful interactions.',
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://aqchat.vercel.app',
+    siteName: 'Aqutte.ai',
+    title: 'Aqutte.ai',
+    description:
+      'Get instant responses, help with tasks, and enjoy meaningful interactions.',
+    images: '/images/og.webp',
+  },
 };
 
 export const viewport: Viewport = {
-  interactiveWidget: 'resizes-content'
-}
+  interactiveWidget: 'resizes-content',
+};
 
 const roboto = Roboto({
   variable: '--font-roboto',
