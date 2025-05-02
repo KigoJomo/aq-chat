@@ -4,7 +4,7 @@ import { useChatContext } from '@/context/ChatContext';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { getDisplayName } from '@/lib/utils';
 import Tooltip from '@/shared/components/ui/Tooltip';
-import { ArrowUp, Plus, Squircle } from 'lucide-react';
+import { ArrowUp, Paperclip, Squircle } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import {
   ChangeEvent,
@@ -86,10 +86,11 @@ export default function ChatInput() {
         <Tooltip content="Attachments coming soon!" size="sm" position="right">
           <button
             className={`
-              border border-foreground-light/20 rounded-full p-2
+              opacity-50
+              border border-foreground-light/40 rounded-full p-2
               cursor-pointer
             `}>
-            <Plus size={16} className="stroke-foreground-light" />
+            <Paperclip size={16} className="stroke-foreground" />
           </button>
         </Tooltip>
 

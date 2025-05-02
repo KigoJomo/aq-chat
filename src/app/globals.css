@@ -68,7 +68,8 @@ li {
 
 p,
 li,
-a {
+a,
+td {
   font-weight: 300;
 }
 

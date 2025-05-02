@@ -2,18 +2,27 @@
 
 import { useChatContext } from '@/context/ChatContext';
 import { useClipBoard } from '@/hooks/useClipboard';
+import { cn } from '@/lib/utils';
 import MarkdownRenderer from '@/shared/components/ui/MarkdownRenderer';
-import { Check, CopyIcon } from 'lucide-react';
+import { ArrowDown, Check, CopyIcon } from 'lucide-react';
+import { useCallback, useRef } from 'react';
 
 export default function ChatContainer() {
   const { copiedMessageIndex, copyToClipboard } = useClipBoard();
   const { messages, loadingMessages: loading } = useChatContext();
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messagesEndRef]);
 
   return (
     <div
       className="
         w-full md:max-w-[48rem] flex-1
         flex flex-col gap-8
+        relative
         transition-all duration-300
       ">
       {loading ? (
@@ -26,8 +35,8 @@ export default function ChatContainer() {
             <div
               key={index}
               className={`
-            w-full flex items-start gap-2 relative group
-            ${message.role === 'user' ? 'animate-fade-in-up' : ''}`}>
+                w-full flex items-start gap-2 relative group
+                ${message.role === 'user' ? 'animate-fade-in-up' : ''}`}>
               <div
                 className={`${
                   message.role === 'user'
@@ -66,7 +75,26 @@ export default function ChatContainer() {
               </div>
             </div>
           ))}
-          <div className="w-full mb-24"></div>
+          <div ref={messagesEndRef} className="w-full mb-24"></div>
+
+          <button
+            className={cn(
+              'sticky bottom-32 mx-auto z-50',
+              'flex items-center justify-center',
+              'w-8 h-8 rounded-full',
+              'border border-foreground-light/30',
+              'bg-background/80 backdrop-blur-sm',
+              'transition-all duration-300 ease-in-out',
+              'hover:bg-background-light/80 hover:border-foreground-light/50',
+              'animate-fade-in-up'
+            )}
+            onClick={scrollToBottom}
+            aria-label="Scroll to bottom">
+            <ArrowDown
+              size={14}
+              className="text-foreground-light/60 transition-colors group-hover:text-foreground-light"
+            />
+          </button>
         </>
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center">

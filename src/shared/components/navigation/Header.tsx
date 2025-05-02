@@ -21,7 +21,7 @@ const Header: FC<HeaderProps> = ({ className = '', children }) => {
     <header
       className={`
         ${className}
-        p-4 pl-14 md:pl-4 backdrop-blur-3xl
+        px-4 py-3 pl-14 md:pl-4 backdrop-blur-3xl
         w-full flex items-center justify-between gap-6
         sticky top-0 z-50
         `}>

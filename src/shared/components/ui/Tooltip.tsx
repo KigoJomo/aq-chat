@@ -67,7 +67,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         clearTimeout(timeout);
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -77,22 +77,19 @@ const Tooltip: React.FC<TooltipProps> = ({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onFocus={handleMouseEnter}
-      onBlur={handleMouseLeave}
-    >
+      onBlur={handleMouseLeave}>
       {children}
       <AnimatePresence>
         {isVisible && (
           <motion.div
             ref={tooltipRef}
             className={`absolute z-50 ${positionClass[position]} ${sizeClasses[size]}
-              hidden md:inline-block // Visible only on desktop
-              text-nowrap rounded-md bg-background backdrop-blur-3xl 
+              text-nowrap rounded-xl bg-background backdrop-blur-3xl 
               text-foreground border border-foreground-light/30 shadow-md ${className}`}
             initial={positionMap[position].initial}
             animate={positionMap[position].animate}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
+            transition={{ duration: 0.2 }}>
             {content}
           </motion.div>
         )}
