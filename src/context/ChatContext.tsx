@@ -14,9 +14,6 @@ import React, {
 } from 'react';
 
 interface ChatContextType {
-  activePage: string | undefined;
-  updateActivePage: (page: string) => void;
-
   sendMessage: (prompt: string) => Promise<void>;
   responding: boolean;
 
@@ -44,9 +41,6 @@ interface ChatContextType {
 const DEFAULT_MODEL = AiModel.GEMINI_2_0_FLASH_LITE;
 
 export const ChatContext = createContext<ChatContextType>({
-  activePage: undefined,
-  updateActivePage: () => {},
-
   sendMessage: async () => {},
   responding: false,
 
@@ -75,8 +69,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { isSignedIn } = useUser();
 
-  const [activePage, setActivePage] = useState<string | undefined>(undefined);
-
   const [chats, setChats] = useState<Chat[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loadingMessages, setLoadingMessages] = useState(false);
@@ -91,10 +83,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const API_URL =
     !isSignedIn || isSignedIn === undefined ? '/api/chat/temp' : '/api/chat';
-
-  const updateActivePage = (page: string) => {
-    setActivePage(page);
-  };
 
   const updateChatId = (newId: string) => {
     setChatId(newId);
@@ -224,7 +212,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const openChat = async (chatId: string, chatTitle?: string) => {
     setChatId(chatId);
     setMessages([]);
-    if(chatTitle) setChatTitle(chatTitle)
+    if (chatTitle) setChatTitle(chatTitle);
 
     try {
       setLoadingMessages(true);
@@ -254,14 +242,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setChatTitle(null);
     setMessages([]);
     setResponding(false);
-    router.push('/')
+    router.push('/');
   };
 
   return (
     <ChatContext.Provider
       value={{
-        activePage,
-        updateActivePage,
         sendMessage,
         responding,
         selectedModel,
