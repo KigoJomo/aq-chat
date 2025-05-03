@@ -13,6 +13,7 @@ import Tooltip from '@/shared/components/ui/Tooltip';
 import { useDeviceType } from '../../../hooks/useDeviceType';
 import { useUser } from '@clerk/nextjs';
 import { useChatContext } from '@/context/ChatContext';
+import Preferences from '../ui/Preferences/Preferences';
 
 const SideBar: FC = () => {
   const { isSignedIn } = useUser();
@@ -58,7 +59,7 @@ const SideBar: FC = () => {
         className={cn(
           'h-dvh bg-background-light',
           'absolute z-[60] md:relative md:max-w-64',
-          'transition-all duration-300 ease-in-out',
+          'transition-all duration-100 ease-in-out',
           'flex flex-col items-start gap-4 p-4',
           'border-r border-foreground-light/50',
           panelOpen
@@ -110,7 +111,7 @@ const SideBar: FC = () => {
                   key={chat._id}
                   className={cn(
                     'py-2 px-4 w-full flex items-center gap-0',
-                    'group rounded-xl transition-all duration-300',
+                    'group rounded-xl transition-all duration-100',
                     chat._id === chatId
                       ? 'bg-background'
                       : 'bg-transparent hover:bg-background/80'
@@ -130,7 +131,7 @@ const SideBar: FC = () => {
 
                   <button
                     className={cn(
-                      'opacity-0 group-hover:opacity-100 transition-all duration-300',
+                      'opacity-0 group-hover:opacity-100 transition-all duration-100',
                       'aspect-square px-1 shrink-0 flex items-center justify-center'
                     )}>
                     <EllipsisVertical size={12} />
@@ -147,6 +148,8 @@ const SideBar: FC = () => {
               Log in to save your chats
             </p>
           ))}
+
+        <Preferences panelOpen={panelOpen} />
       </aside>
 
       <div
@@ -155,13 +158,13 @@ const SideBar: FC = () => {
           panelOpen
             ? 'opacity-80 pointer-events-auto'
             : 'opacity-0 pointer-events-none'
-        } transition-all duration-300`}></div>
+        } transition-all duration-100`}></div>
 
       <button
         onClick={togglePanel}
         className={`flex md:hidden absolute top-4 left-4 z-[60] p-1.5 rounded-lg hover:bg-accent/10 ${
           panelOpen ? 'opacity-0' : 'opacity-100'
-        } transition-all duration-300`}
+        } transition-all duration-100`}
         aria-label={panelOpen ? 'Collapse sidebar' : 'Expand sidebar'}>
         {panelOpen ? (
           <PanelRightOpen className="w-5 h-5 text-foreground/75" />
