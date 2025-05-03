@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import React, { FC, HtmlHTMLAttributes, ReactNode } from 'react';
 import { useChatContext } from '@/context/ChatContext';
+import TempChatButton from '../ui/TempChatButton';
 
 interface HeaderProps extends HtmlHTMLAttributes<HTMLDivElement> {
   className?: string;
@@ -30,13 +31,14 @@ const Header: FC<HeaderProps> = ({ className = '', children }) => {
           href={'/'}
           className="flex items-center gap-2"
           onClick={handleNewChatClick}>
-          <h4 className='!normal-case'>Aqutte.ai</h4>
+          <h4 className="!normal-case">Aqutte.ai</h4>
         </Link>
       </div>
 
       {chatTitle && <span className="text-sm">{chatTitle}</span>}
 
       <div className="auth-components ml-auto md:m-0 flex items-center gap-4">
+        <TempChatButton />
         {children}
       </div>
     </header>

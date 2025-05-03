@@ -36,6 +36,9 @@ interface ChatContextType {
   openChat: (chatId: string, chatTitle?: string) => Promise<void>;
 
   newChat: () => void;
+
+  tempChat: boolean;
+  toggleTempChat: () => void;
 }
 
 const DEFAULT_MODEL = AiModel.GEMINI_2_0_FLASH_LITE;
@@ -63,6 +66,9 @@ export const ChatContext = createContext<ChatContextType>({
   openChat: async () => {},
 
   newChat: () => {},
+
+  tempChat: false,
+  toggleTempChat: () => {},
 });
 
 export function ChatProvider({ children }: { children: ReactNode }) {
@@ -75,14 +81,20 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [responding, setResponding] = useState<boolean>(false);
   const [chatId, setChatId] = useState<string | null>(null);
   const [chatTitle, setChatTitle] = useState<string | null>(null);
+  const [tempChat, setTempChat] = useState<boolean>(false);
 
   const [selectedModel, setSelectedModel] = useState<AiModel>(DEFAULT_MODEL);
   const updateSelectedModel = (model: AiModel) => {
     setSelectedModel(model);
   };
 
-  const API_URL =
-    !isSignedIn || isSignedIn === undefined ? '/api/chat/temp' : '/api/chat';
+  let chatApiUrl;
+
+  if (!isSignedIn || isSignedIn === undefined || tempChat) {
+    chatApiUrl = '/api/chat/temp';
+  } else {
+    chatApiUrl = '/api/chat';
+  }
 
   const updateChatId = (newId: string) => {
     setChatId(newId);
@@ -148,7 +160,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         };
       }
 
-      const res = await fetch(API_URL, {
+      const res = await fetch(chatApiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -213,6 +225,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setChatId(chatId);
     setMessages([]);
     if (chatTitle) setChatTitle(chatTitle);
+    if (tempChat) setTempChat(false)
 
     try {
       setLoadingMessages(true);
@@ -245,6 +258,20 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     router.push('/');
   };
 
+  const toggleTempChat = () => {
+    if (chatId === null && !tempChat) {
+      setTempChat(true);
+      setChatTitle('Temporary Chat');
+    } else {
+      setTempChat(false);
+      setChatTitle(null);
+
+      if (messages.length > 0) {
+        newChat();
+      }
+    }
+  };
+
   return (
     <ChatContext.Provider
       value={{
@@ -263,6 +290,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         refreshChatList,
         openChat,
         newChat,
+        tempChat,
+        toggleTempChat,
       }}>
       {children}
     </ChatContext.Provider>
