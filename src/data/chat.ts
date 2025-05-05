@@ -10,6 +10,7 @@ import {
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
+import chalk from 'chalk';
 
 export async function createNewChat(
   title: string
@@ -26,14 +27,13 @@ export async function createNewChat(
 
   await dbConnect();
 
-  console.log(`>>>> Creating new chat: `);
   const newChat = new Chat({
     userId,
     title: title,
   });
   const newSavedChat = await newChat.save();
 
-  console.log(`>>>>> created new chat: ${newSavedChat.title}`);
+  console.log(chalk.green(`>>>>> created new chat: ${newSavedChat.title}`));
   return newSavedChat;
 }
 
@@ -56,12 +56,12 @@ export async function getChatHistory(chatId: string) {
       return NextResponse.json({ error: 'Chat not found' }, { status: 404 });
     }
 
-    console.log(`>>>>> Getting messages for ${chatId}`)
+    console.log(chalk.blue(`>>>>> Getting messages for ${chatId}`));
     const messages: MessageInterface[] = await Message.find({ chatId });
 
     return messages;
   } catch (error) {
-    console.error('Error loading chat:', error);
+    console.error(chalk.red('Error loading chat:', error));
     return NextResponse.json({ error: 'Failed to load chat' }, { status: 500 });
   }
 }

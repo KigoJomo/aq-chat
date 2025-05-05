@@ -88,14 +88,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setSelectedModel(model);
   };
 
-  let chatApiUrl;
-
-  if (!isSignedIn || isSignedIn === undefined || tempChat) {
-    chatApiUrl = '/api/chat/temp';
-  } else {
-    chatApiUrl = '/api/chat';
-  }
-
   const updateChatId = (newId: string) => {
     setChatId(newId);
   };
@@ -144,19 +136,22 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setMessages((prev) => [...prev, userMessage]);
 
     let payload;
+    let chatApiUrl;
 
     try {
       const history = messages.map(({ role, text }) => ({ role, text }));
 
-      if (chatId && isSignedIn) {
-        payload = {
-          prompt,
-          chatId,
-        };
-      } else {
+      if (!isSignedIn || isSignedIn === undefined || tempChat) {
+        chatApiUrl = '/api/chat/temp';
         payload = {
           prompt,
           history,
+        };
+      } else {
+        chatApiUrl = '/api/chat';
+        payload = {
+          prompt,
+          chatId,
         };
       }
 
@@ -229,7 +224,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setChatId(chatId);
     setMessages([]);
     if (chatTitle) setChatTitle(chatTitle);
-    if (tempChat) setTempChat(false)
+    if (tempChat) setTempChat(false);
 
     try {
       setLoadingMessages(true);

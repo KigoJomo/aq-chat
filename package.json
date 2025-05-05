@@ -12,6 +12,7 @@
     "@clerk/nextjs": "^6.14.0",
     "@google/genai": "^0.10.0",
     "@vercel/analytics": "^1.5.0",
+    "chalk": "^5.4.1",
     "framer-motion": "^12.7.2",
     "lucide-react": "^0.487.0",
     "mongoose": "^8.13.2",

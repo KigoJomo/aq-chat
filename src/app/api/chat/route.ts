@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     }
 
     let title: string | undefined;
-    let currentChatId = chatId
+    let currentChatId;
     let history: MessageInterface[] = [];
 
     if (!chatId) {
@@ -43,28 +43,21 @@ export async function POST(req: NextRequest) {
       if (newChat instanceof NextResponse) {
         return newChat;
       }
-      currentChatId = newChat._id
+      currentChatId = newChat._id;
       title = newChat.title;
-    }
-
-    if (chatId) {
+    } else {
       const hist = await getChatHistory(chatId);
       if (hist instanceof NextResponse) return hist;
+      currentChatId = chatId;
       history = hist;
     }
 
     const savedMessage = await saveMessageToDb(currentChatId!, 'user', prompt);
     if (savedMessage instanceof NextResponse) {
-      return savedMessage; // Return error response if save failed
+      return savedMessage;
     }
-    console.log(savedMessage._id)
 
-    return generateAIResponse(
-      prompt,
-      history,
-      currentChatId,
-      title
-    );
+    return generateAIResponse(prompt, history, currentChatId, title);
   } catch (error) {
     console.error('Unexpected error in chat API:', error);
     return NextResponse.json(

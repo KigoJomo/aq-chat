@@ -1,5 +1,5 @@
 import { Message as MessageInterface } from '@/lib/types/shared_types';
-import { formatHistory } from '@/lib/utils';
+import { formatHistory, sanitizeHeaderValue } from '@/lib/utils';
 import { GoogleGenAI } from '@google/genai';
 import { NextResponse } from 'next/server';
 import { saveMessageToDb } from './message';
@@ -48,17 +48,26 @@ export async function generateAIResponse(
 
       controller.close();
 
-      if (chatId && typeof chatId === 'string') {
-        await saveMessageToDb(chatId, 'model', fullText, MODEL_NAME);
+      if (chatId) {
+        const savedAiMessage = await saveMessageToDb(
+          chatId,
+          'model',
+          fullText,
+          MODEL_NAME
+        );
+
+        if (savedAiMessage instanceof NextResponse) return savedAiMessage;
       }
     },
   });
+
+  const safeTitle = title ? sanitizeHeaderValue(title) : undefined;
 
   return new Response(stream, {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
       ...(chatId && { 'X-Chat-Id': chatId }),
-      ...(title && { 'X-Chat-Title': title }),
+      ...(title && { 'X-Chat-Title': safeTitle }),
     },
   });
 }

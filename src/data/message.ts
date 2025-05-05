@@ -3,6 +3,7 @@ import Message from '@/models/Message';
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import dbConnect from '@/lib/db/dbConnect';
+import chalk from 'chalk';
 
 export async function saveMessageToDb(
   chatId: string,
@@ -11,7 +12,6 @@ export async function saveMessageToDb(
   modelName?: string
 ): Promise<MessageInterface | NextResponse> {
   try {
-    // Validate inputs
     if (!chatId || !mongoose.Types.ObjectId.isValid(chatId)) {
       return NextResponse.json(
         { error: 'Invalid chat ID format' },
@@ -28,7 +28,6 @@ export async function saveMessageToDb(
 
     await dbConnect();
 
-    // Create and save the message
     const newMessage = new Message({
       chatId,
       role,
@@ -42,6 +41,10 @@ export async function saveMessageToDb(
     if (!savedMessage) {
       throw new Error('Failed to save message');
     }
+
+    console.log(
+      chalk.green(`>>>>> Saved message to db. Role: ${savedMessage.role}`)
+    );
 
     return savedMessage.toObject();
   } catch (error) {
