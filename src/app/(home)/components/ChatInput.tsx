@@ -1,6 +1,7 @@
 'use client';
 
 import { useChatContext } from '@/context/ChatContext';
+import { useToast } from '@/context/ToastContext';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { getDisplayName } from '@/lib/utils';
 import Tooltip from '@/shared/components/ui/Tooltip';
@@ -16,10 +17,12 @@ import {
 } from 'react';
 
 export default function ChatInput() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   const [prompt, setPrompt] = useState<string>('');
   const { sendMessage, responding, selectedModel } = useChatContext();
+
+  const { showToast } = useToast();
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const deviceType = useDeviceType();
@@ -48,8 +51,14 @@ export default function ChatInput() {
 
   const handleSubmit = () => {
     if (!prompt.trim()) return;
-    sendMessage(prompt);
-    setPrompt('');
+
+    try {
+      sendMessage(prompt);
+      setPrompt('');
+    } catch (error) {
+      console.error('An error occurred: ', error);
+      showToast(`Error: ${error}`, 'error');
+    }
   };
 
   useEffect(() => updateHeight(), [prompt, updateHeight]);

@@ -166,6 +166,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify(payload),
       });
 
+      if (!res.ok) {
+        throw new Error('An error occurred: ' + res.statusText);
+      }
+
       const newChatId = res.headers.get('X-Chat-Id');
       const newChatTitle = res.headers.get('X-Chat-Title');
 

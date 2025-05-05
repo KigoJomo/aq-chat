@@ -15,6 +15,7 @@ import Header from '@/shared/components/navigation/Header';
 import SideBar from '@/shared/components/navigation/SideBar';
 import ChatInput from './(home)/components/ChatInput';
 import { ChatProvider } from '@/context/ChatContext';
+import { ToastProvider } from '@/context/ToastContext';
 
 export const metadata: Metadata = {
   title: 'Aqutte.ai',
@@ -56,34 +57,39 @@ export default function RootLayout({
       <html lang="en">
         <body
           className={`${roboto.variable} ${lexend.variable} antialiased overflow-x-hidden flex`}>
-          <ChatProvider>
-            <SideBar />
-            <main className="w-full max-h-dvh flex flex-col overflow-y-scroll overflow-x-hidden custom-scrollbar">
-              <Header>
-                <SignedOut>
-                  <SignInButton>
-                    <Button className="shrink-0" size="sm">
-                      <span>Log in</span>
-                    </Button>
-                  </SignInButton>
-                  <div className="shrink-0 hidden md:flex">
-                    <SignUpButton>
-                      <Button className="shrink-0" variant="outline" size="sm">
-                        <span>Sign up</span>
+          <ToastProvider>
+            <ChatProvider>
+              <SideBar />
+              <main className="w-full max-h-dvh flex flex-col overflow-y-scroll overflow-x-hidden custom-scrollbar">
+                <Header>
+                  <SignedOut>
+                    <SignInButton>
+                      <Button className="shrink-0" size="sm">
+                        <span>Log in</span>
                       </Button>
-                    </SignUpButton>
-                  </div>
-                </SignedOut>
-                <SignedIn>
-                  <UserButton />
-                </SignedIn>
-              </Header>
-              <section className="h-full flex flex-col items-center gap-4">
-                {children}
-                <ChatInput />
-              </section>
-            </main>
-          </ChatProvider>
+                    </SignInButton>
+                    <div className="shrink-0 hidden md:flex">
+                      <SignUpButton>
+                        <Button
+                          className="shrink-0"
+                          variant="outline"
+                          size="sm">
+                          <span>Sign up</span>
+                        </Button>
+                      </SignUpButton>
+                    </div>
+                  </SignedOut>
+                  <SignedIn>
+                    <UserButton />
+                  </SignedIn>
+                </Header>
+                <section className="h-full flex flex-col items-center gap-4">
+                  {children}
+                  <ChatInput />
+                </section>
+              </main>
+            </ChatProvider>
+          </ToastProvider>
           <Analytics />
         </body>
       </html>
