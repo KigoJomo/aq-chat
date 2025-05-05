@@ -2,20 +2,13 @@
 
 import { useChatContext } from '@/context/ChatContext';
 import { useClipBoard } from '@/hooks/useClipboard';
-import { cn } from '@/lib/utils';
 import MarkdownRenderer from '@/shared/components/ui/MarkdownRenderer';
-import { ArrowDown, Check, CopyIcon } from 'lucide-react';
-import { useCallback, useRef } from 'react';
+import { Check, CopyIcon, RefreshCcw, SquarePen } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function ChatContainer() {
   const { copiedMessageIndex, copyToClipboard } = useClipBoard();
   const { messages, loadingMessages: loading } = useChatContext();
-
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messagesEndRef]);
 
   return (
     <div
@@ -35,8 +28,12 @@ export default function ChatContainer() {
             <div
               key={index}
               className={`
-                w-full flex items-start gap-2 relative group
-                ${message.role === 'user' ? 'animate-fade-in-up' : ''}`}>
+                w-full flex flex-col gap-4 group
+                ${
+                  message.role === 'user'
+                    ? 'items-end animate-fade-in-up'
+                    : 'items-start'
+                }`}>
               <div
                 className={`${
                   message.role === 'user'
@@ -47,54 +44,48 @@ export default function ChatContainer() {
                   markdownContent={message.text}
                   className="max-w-full prose dark:prose-invert"
                 />
+              </div>
 
-                {/* button(s) */}
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => copyToClipboard(message.text, index)}
-                    className={`
-                  ${
-                    message.role === 'user'
-                      ? 'absolute top-2 right-full mr-2 opacity-0 group-hover:opacity-100'
-                      : '*:hover:stroke-accent'
-                  }
-                  transition-all cursor-pointer
-                `}
-                    aria-label={
-                      copiedMessageIndex === index
-                        ? 'Copied to clipboard'
-                        : 'Copy message'
-                    }>
-                    {copiedMessageIndex === index ? (
-                      <Check size={14} className="" />
-                    ) : (
-                      <CopyIcon size={14} className="transition-all" />
-                    )}
-                  </button>
-                </div>
+              {/* button(s) */}
+              <div
+                className={cn(
+                  'px-2 flex items-center gap-4',
+                  'opacity-0 group-hover:opacity-100',
+                  'transition-all duration-300',
+                  '[&>*]:transition-all [&>*]:duration-300 [&>*]:opacity-50 [&>*]:hover:opacity-100'
+                )}>
+                {message.role === 'user' && (
+                  <>
+                    <button
+                      className={cn('hover:scale-105')}
+                      aria-label="Regenerate message">
+                      <RefreshCcw size={14} />
+                    </button>
+
+                    <button className={cn('hover:scale-105')}>
+                      <SquarePen size={14} />
+                    </button>
+                  </>
+                )}
+
+                <button
+                  className={cn('hover:scale-105')}
+                  onClick={() => copyToClipboard(message.text, index)}
+                  aria-label={
+                    copiedMessageIndex === index
+                      ? 'Copied to clipboard'
+                      : 'Copy message'
+                  }>
+                  {copiedMessageIndex === index ? (
+                    <Check size={14} />
+                  ) : (
+                    <CopyIcon size={14} />
+                  )}
+                </button>
               </div>
             </div>
           ))}
-          <div ref={messagesEndRef} className="w-full mb-24"></div>
-
-          <button
-            className={cn(
-              'sticky bottom-32 mx-auto z-50',
-              'flex items-center justify-center',
-              'w-8 h-8 rounded-full',
-              'border border-foreground-light/30',
-              'bg-background/80 backdrop-blur-sm',
-              'transition-all duration-300 ease-in-out',
-              'hover:bg-background-light/80 hover:border-foreground-light/50',
-              'animate-fade-in-up'
-            )}
-            onClick={scrollToBottom}
-            aria-label="Scroll to bottom">
-            <ArrowDown
-              size={14}
-              className="text-foreground-light/60 transition-colors group-hover:text-foreground-light"
-            />
-          </button>
+          <div className="w-full mb-24"></div>
         </>
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center">
