@@ -41,7 +41,7 @@ interface ChatContextType {
   toggleTempChat: () => void;
 }
 
-const DEFAULT_MODEL = AiModel.GEMINI_2_0_FLASH_LITE;
+const DEFAULT_MODEL = AiModel.GEMINI_2_0_FLASH;
 
 export const ChatContext = createContext<ChatContextType>({
   sendMessage: async () => {},
@@ -75,15 +75,19 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { isSignedIn } = useUser();
 
-  const [chats, setChats] = useState<Chat[]>([]);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loadingMessages, setLoadingMessages] = useState(false);
   const [responding, setResponding] = useState<boolean>(false);
-  const [chatId, setChatId] = useState<string | null>(null);
-  const [chatTitle, setChatTitle] = useState<string | null>(null);
-  const [tempChat, setTempChat] = useState<boolean>(false);
 
   const [selectedModel, setSelectedModel] = useState<AiModel>(DEFAULT_MODEL);
+
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loadingMessages, setLoadingMessages] = useState(false);
+
+  const [chatId, setChatId] = useState<string | null>(null);
+  const [chatTitle, setChatTitle] = useState<string | null>(null);
+  const [chats, setChats] = useState<Chat[]>([]);
+
+  const [tempChat, setTempChat] = useState<boolean>(false);
+
   const updateSelectedModel = (model: AiModel) => {
     setSelectedModel(model);
   };
@@ -146,12 +150,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         payload = {
           prompt,
           history,
+          modelName: selectedModel,
         };
       } else {
         chatApiUrl = '/api/chat';
         payload = {
           prompt,
           chatId,
+          modelName: selectedModel,
         };
       }
 

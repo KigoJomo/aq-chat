@@ -3,7 +3,6 @@
 import { useChatContext } from '@/context/ChatContext';
 import { useToast } from '@/context/ToastContext';
 import { useDeviceType } from '@/hooks/useDeviceType';
-import { getDisplayName } from '@/lib/utils';
 import Tooltip from '@/shared/components/ui/Tooltip';
 import { ArrowUp, Paperclip, Squircle } from 'lucide-react';
 import { usePathname } from 'next/navigation';
@@ -15,12 +14,13 @@ import {
   useRef,
   useState,
 } from 'react';
+import ModelSelector from './ModelSelector';
 
 export default function ChatInput() {
   const pathname = usePathname();
 
   const [prompt, setPrompt] = useState<string>('');
-  const { sendMessage, responding, selectedModel } = useChatContext();
+  const { sendMessage, responding } = useChatContext();
 
   const { showToast } = useToast();
 
@@ -103,16 +103,7 @@ export default function ChatInput() {
           </button>
         </Tooltip>
 
-        <Tooltip content="More models coming soon!" size="sm" position="right">
-          <button
-            className={`
-              border border-foreground-light/20 rounded-full p-2
-              text-xs
-              cursor-pointer
-            `}>
-            {getDisplayName(selectedModel)}
-          </button>
-        </Tooltip>
+        <ModelSelector />
 
         <button
           className={`

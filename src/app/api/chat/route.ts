@@ -25,7 +25,7 @@ import { saveMessageToDb } from '@/data/message';
 
 export async function POST(req: NextRequest) {
   try {
-    const { prompt, chatId } = await req.json();
+    const { prompt, chatId, modelName } = await req.json();
 
     if (!prompt) {
       return NextResponse.json(
@@ -57,7 +57,13 @@ export async function POST(req: NextRequest) {
       return savedMessage;
     }
 
-    return generateAIResponse(prompt, history, currentChatId, title);
+    return generateAIResponse({
+      prompt: prompt,
+      history: history,
+      chatId: chatId,
+      title: title,
+      ...(modelName && { modelName: modelName }),
+    });
   } catch (error) {
     console.error('Unexpected error in chat API:', error);
     return NextResponse.json(

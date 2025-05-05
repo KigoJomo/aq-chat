@@ -3,16 +3,23 @@ import { formatHistory, sanitizeHeaderValue } from '@/lib/utils';
 import { GoogleGenAI } from '@google/genai';
 import { NextResponse } from 'next/server';
 import { saveMessageToDb } from './message';
+import chalk from 'chalk';
 
-const MODEL_NAME = 'gemini-2.0-flash';
-// const MODEL_NAME = 'gemini-2.0-flash-lite';
+interface AiResponseParams {
+  prompt: string;
+  modelName?: string;
+  history: MessageInterface[];
+  chatId?: string;
+  title?: string;
+}
 
-export async function generateAIResponse(
-  prompt: string,
-  history: MessageInterface[],
-  chatId?: string,
-  title?: string
-) {
+export async function generateAIResponse({
+  prompt,
+  modelName,
+  history,
+  chatId,
+  title,
+}: AiResponseParams) {
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
   if (!GEMINI_API_KEY) {
@@ -24,7 +31,9 @@ export async function generateAIResponse(
   }
 
   const formattedHistory = formatHistory(history);
+  const MODEL_NAME = modelName ? modelName : 'gemini-2.0-flash';
 
+  console.log(chalk.blue(`>>>>> Getting response from ${MODEL_NAME}`));
   const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
   const chat = ai.chats.create({
     model: MODEL_NAME,
