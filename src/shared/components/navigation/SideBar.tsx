@@ -105,7 +105,11 @@ const SideBar: FC = () => {
 
         {panelOpen &&
           (isSignedIn ? (
-            <div className={cn('w-full flex flex-col gap-2', '')}>
+            <div
+              className={cn(
+                'w-full flex flex-col gap-2',
+                'h-full overflow-y-scroll hide-scrollbar'
+              )}>
               {chats.map((chat) => (
                 <div
                   key={chat._id}

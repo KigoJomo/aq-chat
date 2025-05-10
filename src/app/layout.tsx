@@ -54,7 +54,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" className="hide-scrollbar">
         <body
           className={`${roboto.variable} ${lexend.variable} antialiased overflow-x-hidden flex`}>
           <ToastProvider>
