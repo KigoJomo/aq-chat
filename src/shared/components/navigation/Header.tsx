@@ -14,6 +14,10 @@ const Header: FC<HeaderProps> = ({ className = '', children }) => {
   const { chatTitle, newChat } = useChatContext();
 
   const handleNewChatClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button === 1) {
+      return
+    }
+    
     e.preventDefault();
     newChat();
   };

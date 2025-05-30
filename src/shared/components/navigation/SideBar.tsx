@@ -48,6 +48,10 @@ const SideBar: FC = () => {
   const togglePanel = () => setPanelOpen(!panelOpen);
 
   const handleNewChatClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button === 1) {
+      return
+    }
+    
     e.preventDefault();
     setPanelOpen(deviceType === 'mobileOrTablet' ? false : panelOpen);
     newChat();
