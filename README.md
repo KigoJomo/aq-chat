@@ -1,65 +1,44 @@
-# 🤖 AQ-Chat
+# AQ Chat
 
-*Because talking to humans is overrated anyway.*
+A signed-in Gemini chat app with streamed replies and saved conversation history.
 
-## What is this?
+[Open AQ Chat](https://aqchat.vercel.app)
 
-AQ-Chat is a sleek, modern AI chatbot application built with Next.js that lets you have conversations with an AI assistant. It's like having a friend who actually listens to you, never gets tired, and doesn't steal your leftovers from the fridge.
+## What it does
 
-## ✨ Features
+- signs users in with Clerk
+- streams replies from Gemini
+- stores chats and messages in MongoDB
+- lists recent chats and allows renaming or deletion
+- renders Markdown, tables, and syntax-highlighted code
+- copies code blocks to the clipboard
+- keeps the layout usable on phones and desktops
 
-- **Clean, intuitive UI** - Even your grandma could use it (maybe)
-- **Markdown support** - For when plain text is just too... plain
-- **Code highlighting** - With syntax highlighting and copy functionality, because typing out code is for masochists
-- **Authentication** - Keep your embarrassing AI conversations private
-- **Responsive design** - Chat from your phone while pretending to work
+The default model is `gemini-2.0-flash`. This is a personal experiment, not a general-purpose hosted assistant. API usage is charged to the configured Google account.
 
-## 🔧 Tech Stack
-
-- **Next.js 15** - For that sweet, sweet server-side rendering
-- **React 19** - Because we like our components like we like our coffee: functional
-- **TypeScript** - For catching errors before they catch you
-- **Zustand** - State management without the boilerplate drama
-- **Clerk** - Authentication that doesn't make you want to pull your hair out
-- **Tailwind CSS** - Because writing custom CSS in 2023+ is like churning your own butter
-
-## 🚀 Getting Started
+## Run it locally
 
 ```bash
-# Clone the repo (unless you enjoy typing out URL's manually)
-git clone https://github.com/KigoJomo/aq-chat.git
-
-# Install dependencies
-cd aq-chat
 npm install
-
-# Set up environment variables
-cp .env.example .env.local
-
-# Run the development server
 npm run dev
 ```
 
-Then open [http://localhost:3000](http://localhost:3000) with your browser, and voilà! A chatbot that's probably smarter than some of your colleagues.
+Create `.env.local` with a Gemini key, MongoDB connection, and Clerk application keys.
 
-## 💬 Usage
+```dotenv
+GEMINI_API_KEY=your-key
+MONGODB_URI=mongodb://localhost:27017/aq-chat
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your-key
+CLERK_SECRET_KEY=your-key
+```
 
-1. Sign in (we promise not to sell your data... probably)
-2. Start a new chat
-3. Type your existential questions
-4. Receive wisdom (results may vary)
-5. Question your life choices that led you to seeking advice from an AI
+Open `http://localhost:3000`.
 
-## 🤝 Contributing
+## Checks
 
-Pull requests are welcome! Just make sure your code doesn't scream "I have no idea what I'm doing." We've all been there.
+```bash
+npm run lint
+npm run build
+```
 
-1. Fork the repo
-2. Create your feature branch: `git checkout -b my-amazing-feature`
-3. Commit your changes: `git commit -m 'Add some amazingness'`
-4. Push to the branch: `git push origin my-amazing-feature`
-5. Submit a pull request and cross your fingers
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details, or don't. We're a README, not the police.
+The repository currently has no automated test suite.
